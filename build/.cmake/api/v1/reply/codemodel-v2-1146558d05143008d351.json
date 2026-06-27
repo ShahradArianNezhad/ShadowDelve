@@ -1,0 +1,210 @@
+{
+	"configurations" : 
+	[
+		{
+			"abstractTargets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "Freetype::Freetype::@9d6046af933cc3028bae",
+					"jsonFile" : "target-Freetype__Freetype-Debug-720a63dc54b47c8dc6f5.json",
+					"name" : "Freetype::Freetype",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::EGL::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__EGL-Debug-a96fd2fd3bd7a71c7f7d.json",
+					"name" : "OpenGL::EGL",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::GL::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__GL-Debug-ef54f3a9c73ab0cf0a6e.json",
+					"name" : "OpenGL::GL",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::GLES2::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__GLES2-Debug-60826b9687ec86f88f32.json",
+					"name" : "OpenGL::GLES2",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::GLES3::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__GLES3-Debug-cb94e3ce73409509a7c5.json",
+					"name" : "OpenGL::GLES3",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::GLU::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__GLU-Debug-c47e91562d2f5e110c6b.json",
+					"name" : "OpenGL::GLU",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::GLX::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__GLX-Debug-274b47fafabaf9054d02.json",
+					"name" : "OpenGL::GLX",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OpenGL::OpenGL::@9d6046af933cc3028bae",
+					"jsonFile" : "target-OpenGL__OpenGL-Debug-be873b477a0d079e7d10.json",
+					"name" : "OpenGL::OpenGL",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "Threads::Threads::@9d6046af933cc3028bae",
+					"jsonFile" : "target-Threads__Threads-Debug-d55ad8a2395a0866130c.json",
+					"name" : "Threads::Threads",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "glfw::@9d6046af933cc3028bae",
+					"jsonFile" : "target-glfw-Debug-91f39b54f9313b7ec373.json",
+					"name" : "glfw",
+					"projectIndex" : 1
+				}
+			],
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-fd6451d79dc282e2f566.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "4.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"abstractTargetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"build" : "vireon",
+					"jsonFile" : "directory-vireon-Debug-683db37782d888a5e5d4.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "4.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "vireon",
+					"targetIndexes" : 
+					[
+						0,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "shadowDelve",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"abstractTargetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "vireon",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "glad::@9d6046af933cc3028bae",
+					"jsonFile" : "target-glad-Debug-778f6d7be17dfdb28002.json",
+					"name" : "glad",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "shadowDelve::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-shadowDelve-Debug-363fcf12301e850b976b.json",
+					"name" : "shadowDelve",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "vireon::@9d6046af933cc3028bae",
+					"jsonFile" : "target-vireon-Debug-6a1f348c458384589fa3.json",
+					"name" : "vireon",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/shahrad/Programming/shadowDelve/build",
+		"source" : "/home/shahrad/Programming/shadowDelve"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 10
+	}
+}

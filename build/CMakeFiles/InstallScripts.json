@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/shahrad/Programming/shadowDelve/build/cmake_install.cmake",
+		"/home/shahrad/Programming/shadowDelve/build/vireon/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
