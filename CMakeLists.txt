@@ -15,7 +15,7 @@ target_include_directories(shadowDelve PRIVATE src)
 target_include_directories(shadowDelve PRIVATE include)
 target_include_directories(shadowDelve PRIVATE vireon/vireon.hpp)
 
-target_compile_features(shadowDelve PRIVATE cxx_std_23)
+target_compile_features(shadowDelve PRIVATE cxx_std_20)
 add_subdirectory(vireon)
 target_link_libraries(shadowDelve vireon)
 

@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/shahrad/Programming/shadowDelve/src -I/home/shahrad/Programming/shadowDelve/include -I/home/shahrad/Programming/shadowDelve/vireon/vireon.hpp -I/home/shahrad/Programming/shadowDelve/vireon/src -I/home/shahrad/Programming/shadowDelve/vireon/include -I/home/shahrad/Programming/shadowDelve/vireon/api -isystem /usr/include/freetype2
 
-CXX_FLAGS = -g -std=gnu++23
+CXX_FLAGS = -g
 

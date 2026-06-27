@@ -6,5 +6,5 @@ CXX_DEFINES = -DENGINE_DEBUG
 
 CXX_INCLUDES = -I/home/shahrad/Programming/shadowDelve/vireon/src -I/home/shahrad/Programming/shadowDelve/vireon/include -I/home/shahrad/Programming/shadowDelve/vireon/api -isystem /usr/include/freetype2
 
-CXX_FLAGS = -g -std=gnu++23 -Wall -Wextra -Wpedantic -O0
+CXX_FLAGS = -g -Wall -Wextra -Wpedantic -O0
 
