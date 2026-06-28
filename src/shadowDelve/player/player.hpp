@@ -34,6 +34,7 @@ class Player {
   bool canDash=true;
   double dashTimer=0;
   EntityId trail1=UINT32_MAX,trail2=UINT32_MAX,trail3=UINT32_MAX;
+  EntityId collider;
 
   bool needDoorPopUp=true;
   size_t doorPopUpIndex=SIZE_MAX;

@@ -416,7 +416,7 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
           if(flip_v)position.x-=(BLOCKSIZE/2.0)-3;
           else position.x+=(BLOCKSIZE/2.0)-3;
         }
-        //else if(isBackWall(uv))position.z=ENTITY_LAYER+1;
+        else if(isBackWall(uv))position.z=ENTITY_LAYER+1;
 
         auto id =engine.makeSprite(position,"./assets/Dungeon_Tileset.png",uv,{uv.x+1/10.0,uv.y+1/10.0});
         if(hidden){
@@ -467,26 +467,34 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
 
 void TileMap::addColliderForTile(vec2 uv,TileType& type,EntityId id){
   if(isBackWall(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)},{BLOCKSIZE/2,BLOCKSIZE/64},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{(BLOCKSIZE/2)-2,BLOCKSIZE/8},0});
     type=TileType::Wall;
   }else if(isLeftSideWall(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-(BLOCKSIZE/4),0},{(BLOCKSIZE/4)-5,BLOCKSIZE/2},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-(BLOCKSIZE/4),0},{(BLOCKSIZE/4)-2,BLOCKSIZE/2},0});
     type=TileType::Wall;
   }else if(isRightSideWall(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{(BLOCKSIZE/4),0},{(BLOCKSIZE/4)-5,BLOCKSIZE/2},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{(BLOCKSIZE/4),0},{(BLOCKSIZE/4)-2,BLOCKSIZE/2},0});
     type=TileType::Wall;
   }else if(isTopWall(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)},{BLOCKSIZE/2,(BLOCKSIZE/4)-5},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)-1},{BLOCKSIZE/2,(BLOCKSIZE/4)-3},0});
     type=TileType::Wall;
-  }else if(isDoor(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)},{BLOCKSIZE/2,(BLOCKSIZE/4)-5},0});
+  }else if(isHorizontalDoor(uv)){
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)-1},{BLOCKSIZE/2,(BLOCKSIZE/4)-3},0});
+    type=TileType::Wall;
+  }else if(isVerticalDoor(uv)){
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{(BLOCKSIZE/4)-5,BLOCKSIZE/2},0});
     type=TileType::Wall;
   }else if(isTopLeftCorner(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-(BLOCKSIZE/4),-(BLOCKSIZE/4)},{(BLOCKSIZE/4)-5,BLOCKSIZE/4},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)-1},{(BLOCKSIZE/2)-2,(BLOCKSIZE/4)-3},0});
     type=TileType::Wall;
   }else if(isTopRightCorner(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{(BLOCKSIZE/4),-(BLOCKSIZE/4)},{(BLOCKSIZE/4)-5,BLOCKSIZE/4},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-(BLOCKSIZE/4)-1},{(BLOCKSIZE/2)-2,(BLOCKSIZE/4)-3},0});
     type=TileType::Wall;
+  }else return;
+  if(showCollider){
+    auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+    auto collider = engine.componentManager.getComponent<Component::RECTCOLLIDER>(id);
+    engine.makeRect({trans.position.x+collider.offset.x,trans.position.y+collider.offset.y,ENTITY_LAYER+2},collider.scale);
   }
 }
 

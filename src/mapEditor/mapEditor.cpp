@@ -113,7 +113,7 @@ public:
     auto cursorPos = engine.inputHandler.getCursorPos();
     if(cursorPos.x >200 || cursorPos.x <-200 || cursorPos.y >200 || cursorPos.y <-200)return;
     uvMin.x = (std::ceil(cursorPos.x/40)+4)/10.0;
-    uvMin.y = (std::ceill(cursorPos.y/40)+4)/10.0;
+    uvMin.y = (std::ceil(cursorPos.y/40)+4)/10.0;
     uvMax.x = (std::ceil(cursorPos.x/40)+5)/10.0;
     uvMax.y = (std::ceil(cursorPos.y/40)+5)/10.0;
     engine.changeSprite(selection,"./assets/Dungeon_Tileset.png",uvMin,uvMax);

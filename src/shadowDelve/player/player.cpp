@@ -10,8 +10,11 @@
 
 void Player::init(){
   id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
-  auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
-  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{32,42},0});
+  if(showCollider){
+    auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},{12,18},0});
+    collider = engine.makeRect(comp.position, {12,18});
+  }
   setMode(MODE::IDLE);
 }
 
@@ -70,6 +73,15 @@ void Player::applyVelocity(double dt){
         comp.position.y-=normalVelocity.y*maxSpeed*dt;
         engine.componentManager.setComponent(id, comp);
       }
+    }
+
+
+    if(showCollider){
+      auto colTrans = engine.componentManager.getComponent<Component::TRANSFORM>(collider);
+      auto colRect = engine.componentManager.getComponent<Component::RECTCOLLIDER>(id);
+      colTrans.position = {comp.position.x+colRect.offset.x,comp.position.y+colRect.offset.y,comp.position.z-1};
+      colTrans.scale = vec3{colRect.scale,0};
+      engine.componentManager.setComponent(collider, colTrans);
     }
 
 }
