@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/shahrad/Programming/shadowDelve/src -I/home/shahrad/Programming/shadowDelve/include -I/home/shahrad/Programming/shadowDelve/vireon/vireon.hpp -I/home/shahrad/Programming/shadowDelve/vireon/src -I/home/shahrad/Programming/shadowDelve/vireon/include -I/home/shahrad/Programming/shadowDelve/vireon/api -isystem /usr/include/freetype2
+CXX_INCLUDES = -I/home/shahrad/Programming/shadowDelve/src -I/home/shahrad/Programming/shadowDelve/include -I/home/shahrad/Programming/shadowDelve/Vireon/vireon.hpp -I/home/shahrad/Programming/shadowDelve/Vireon/src -I/home/shahrad/Programming/shadowDelve/Vireon/include -I/home/shahrad/Programming/shadowDelve/Vireon/api -isystem /usr/include/freetype2
 
 CXX_FLAGS = -g
 

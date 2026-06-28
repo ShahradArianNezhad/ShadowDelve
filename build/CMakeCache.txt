@@ -284,13 +284,13 @@ shadowDelve_IS_TOP_LEVEL:STATIC=ON
 shadowDelve_SOURCE_DIR:STATIC=/home/shahrad/Programming/shadowDelve
 
 //Value Computed by CMake
-vireon_BINARY_DIR:STATIC=/home/shahrad/Programming/shadowDelve/build/vireon
+vireon_BINARY_DIR:STATIC=/home/shahrad/Programming/shadowDelve/build/Vireon
 
 //Value Computed by CMake
 vireon_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-vireon_SOURCE_DIR:STATIC=/home/shahrad/Programming/shadowDelve/vireon
+vireon_SOURCE_DIR:STATIC=/home/shahrad/Programming/shadowDelve/Vireon
 
 
 ########################

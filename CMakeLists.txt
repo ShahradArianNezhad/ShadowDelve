@@ -13,10 +13,10 @@ file(GLOB_RECURSE PROJECT_HEADERS CONFIGURE_DEPENDS
 add_executable(shadowDelve ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 target_include_directories(shadowDelve PRIVATE src)
 target_include_directories(shadowDelve PRIVATE include)
-target_include_directories(shadowDelve PRIVATE vireon/vireon.hpp)
+target_include_directories(shadowDelve PRIVATE Vireon/vireon.hpp)
 
 target_compile_features(shadowDelve PRIVATE cxx_std_20)
-add_subdirectory(vireon)
+add_subdirectory(Vireon)
 target_link_libraries(shadowDelve vireon)
 
 set_target_properties(shadowDelve PROPERTIES

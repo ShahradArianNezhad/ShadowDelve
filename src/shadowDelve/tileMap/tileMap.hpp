@@ -27,6 +27,7 @@ struct Enemy{
 
 class TileMap{
   private:
+    EntityId player=UINT32_MAX;
     Engine& engine;
     std::vector<DoorPair> unusedDoors;
     static constexpr std::string_view roomsPath = "./assets/map/rooms";
@@ -51,7 +52,9 @@ class TileMap{
     void revealTiles(vec2 pos,std::vector<vec2>& visited);
     void revealFromDoor(DoorPair& pair,vec2 from);
     void deleteEntity(EntityId id);
+    void deleteFromTilemap(EntityId id);
     void sealUnusedDoors();
+    void updateBackWallZ();
     std::pair<int,int> findMatchingDoorDiff(nlohmann::json& data,DoorPair& pair);
 
 
@@ -75,12 +78,15 @@ class TileMap{
     static bool isRightDoor(vec2 uv);
     static bool isTopDoor(vec2 uv);
     static bool isBottomDoor(vec2 uv);
+    static bool isFloor(vec2 uv);
     static bool isCorner(vec2 uv);
+    static bool isHorizontalTorch(vec2 uv);
     static bool isWall(vec2 uv);
     DoorPair getDoorPair(EntityId door);
     std::pair<int,int> positionToGridCords(vec2 pos);
     void toggleDoor(DoorPair& pair,vec2 from={0,0});
     void toggleDoor(EntityId door,vec2 from={0,0});
+    void setPlayer(EntityId id){player=id;}
 
 
     TileMap(Engine& e):engine(e){};

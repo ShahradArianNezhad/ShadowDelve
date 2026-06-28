@@ -17,6 +17,7 @@ void TileMap::init(){
 }
 
 void TileMap::update(double){
+  updateBackWallZ();
 }
 
 void TileMap::generateMap(){
@@ -293,6 +294,11 @@ std::vector<Tile> TileMap::getNearbyTiles(vec2 position,int radius){
   return result;
 }
 
+
+bool TileMap::isFloor(vec2 uv){
+  return (uv.x>=6.0/10 && uv.y<=2.0f/10) || (uv.x<=3.0f/10 && uv.y>=6.0f/10 && uv.y<=7.0f/10) || (uv.x>=1.0f/10 && uv.x<=4.0f/10 && uv.y>=1.0f/10 && uv.y<=3.0f/10)||(uv.x==9.0f/10 && uv.y==7.0f/10);
+}
+
 bool TileMap::isCorner(vec2 uv){
   return (uv.x==0 && uv.y>=4.0f/10 && uv.y<=5.0f/10) || (uv.x>=3.0f/10 && uv.x<=5.0f/10 && uv.y==5.0f/10) || (uv.x==5.0f/10 && uv.y==4.0f/10);
 }
@@ -371,6 +377,10 @@ bool TileMap::isSideTorch(vec2 uv){
   return uv.x==1.0f/10 && uv.y==9.0f/10;
 }
 
+bool TileMap::isHorizontalTorch(vec2 uv){
+  return uv.x==0.0f/10 && uv.y==9.0f/10;
+}
+
 
 bool TileMap::parseFlipHFromJson(std::string& uvText){
           std::string h = uvText.substr(0,uvText.find(","));
@@ -401,7 +411,8 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
   std::unordered_map<int,std::unordered_map<int,bool>> changed;
   for(auto& [tileX,tileYtoUv]:data["tile"].items()){
     for(auto& [tileY,uvArray]:tileYtoUv.items()){
-      size_t z=0;
+      bool wallPlaced = false;
+      size_t z=4;
       for(std::string uvText:uvArray){
         vec2 uv = parseUvFromJson(uvText);
         bool flip_h = parseFlipHFromJson(uvText);
@@ -410,15 +421,23 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
         auto gridY = std::stoi(tileY) + dy;
 
         if(!changed[gridX].contains(gridY) && !isGridEmpty(gridX,gridY))break;
-        vec3 position = {gridX*BLOCKSIZE - BLOCKSIZE/2,gridY*BLOCKSIZE - BLOCKSIZE/2,z++};
+        vec3 position = {gridX*BLOCKSIZE - BLOCKSIZE/2,gridY*BLOCKSIZE - BLOCKSIZE/2,0};
 
         if(isSideTorch(uv)){
           if(flip_v)position.x-=(BLOCKSIZE/2.0)-3;
           else position.x+=(BLOCKSIZE/2.0)-3;
         }
-        else if(isBackWall(uv))position.z=ENTITY_LAYER+1;
+        if(isFloor(uv))position.z=FLOOR_LAYER;
+        else if(isWall(uv)){
+          wallPlaced=true;
+          position.z=WALL_LAYER;
+        }
+        else if(isDoor(uv))position.z=DOOR_LAYER;
+        else if(isHorizontalTorch(uv)&&!wallPlaced)position.z=0;
+        else position.z=z;
 
         auto id =engine.makeSprite(position,"./assets/Dungeon_Tileset.png",uv,{uv.x+1/10.0,uv.y+1/10.0});
+        if(isSideTorch(uv))LOG_WARN("SIZDE TORCH Z = {}",position.z);
         if(hidden){
           auto render = engine.componentManager.getComponent<Component::RENDER>(id);
           render.visible=false;
@@ -467,7 +486,7 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
 
 void TileMap::addColliderForTile(vec2 uv,TileType& type,EntityId id){
   if(isBackWall(uv)){
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{(BLOCKSIZE/2)-2,BLOCKSIZE/8},0});
+    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{(BLOCKSIZE/2)-2,BLOCKSIZE/64},0});
     type=TileType::Wall;
   }else if(isLeftSideWall(uv)){
     engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-(BLOCKSIZE/4),0},{(BLOCKSIZE/4)-2,BLOCKSIZE/2},0});
@@ -602,48 +621,56 @@ void TileMap::toggleDoor(EntityId door,vec2 from){
   auto collider = engine.componentManager.getComponent<Component::RECTCOLLIDER>(door);
   auto [gridX,gridY] = positionToGridCords(trans.position);
   for(auto& tile:tileMap[gridX][gridY]){
-    if(tile.id==door)tile.type=TileType::Floor;
+    if(tile.id==door){
+      tile.type=TileType::Floor;
+      break;
+    }
   }
+
   if(isLeftDoor(uv.uvMin)){
     if(trans.position.y<from.y){
       uv.uvMin = {7.0f/10,5.0f/10};
       uv.uvMax = {8.0f/10,6.0f/10};
+      trans.position.y-=BLOCKSIZE/3.0;
     }else{
       uv.uvMin = {7.0f/10,4.0f/10};
       uv.uvMax = {8.0f/10,5.0f/10};
+      trans.position.y+=BLOCKSIZE/3.0;
     }
   }else if(isRightDoor(uv.uvMin)){
     if(trans.position.y<from.y){
       uv.uvMin = {8.0f/10,5.0f/10};
       uv.uvMax = {9.0f/10,6.0f/10};
+      trans.position.y-=BLOCKSIZE/3.0;
     }else{
       uv.uvMin = {8.0f/10,4.0f/10};
       uv.uvMax = {9.0f/10,5.0f/10};
+      trans.position.y+=BLOCKSIZE/3.0;
     }
   }else if(isTopDoor(uv.uvMin)){
-    if(trans.position.x<from.x){
-      uv.uvMin = {6.0f/10,3.0f/10};
-      uv.uvMax = {7.0f/10,4.0f/10};
-      trans.position.y-=BLOCKSIZE/3.0;
+    uv.uvMin = {6.0f/10,3.0f/10};
+    uv.uvMax = {7.0f/10,4.0f/10};
+    trans.position.y-=BLOCKSIZE/3.0;
+    trans.position.z=WALL_LAYER+1;
+    if(trans.position.x>from.x){
+      trans.position.x+=BLOCKSIZE/2.0;
     }else{
-      uv.uvMin = {7.0f/10,3.0f/10};
-      uv.uvMax = {8.0f/10,4.0f/10};
-      trans.position.y-=BLOCKSIZE/3.0;
+      trans.scale.x*=-1;
+      trans.position.x-=BLOCKSIZE/2.0;
     }
   }else if(isBottomDoor(uv.uvMin)){
-    if(trans.position.x<from.x){
-      uv.uvMin = {7.0f/10,3.0f/10};
-      uv.uvMax = {8.0f/10,4.0f/10};
-      trans.position.y+=BLOCKSIZE/3.0;
+    uv.uvMin = {7.0f/10,3.0f/10};
+    uv.uvMax = {8.0f/10,4.0f/10};
+    trans.position.y+=BLOCKSIZE/3.0;
+    if(trans.position.x>from.x){
+      trans.scale.x*=-1;
+      trans.position.x+=BLOCKSIZE/2.0;
     }else{
-      uv.uvMin = {6.0f/10,3.0f/10};
-      uv.uvMax = {7.0f/10,4.0f/10};
-      trans.position.y+=BLOCKSIZE/3.0;
+      trans.position.x-=BLOCKSIZE/2.0;
     }
   }else{
     return;
   }
-
   engine.componentManager.setComponent(door, uv);
   engine.componentManager.setComponent(door, trans);
   engine.componentManager.setComponent(door, collider);
@@ -651,20 +678,53 @@ void TileMap::toggleDoor(EntityId door,vec2 from){
 }
 
 void TileMap::deleteEntity(EntityId id){
+  engine.entityManager.deleteEntity(id);
+  deleteFromTilemap(id);
+}
+
+void TileMap::deleteFromTilemap(EntityId id){
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   auto [gridX,gridY] = positionToGridCords(trans.position);
   for(int i=0;i<tileMap[gridX][gridY].size();i++){
     if(tileMap[gridX][gridY][i].id==id){
       tileMap[gridX][gridY].erase(tileMap[gridX][gridY].begin()+i);
-      engine.entityManager.deleteEntity(id);
       return;
     }
   }
 }
 
+
 void TileMap::toggleDoor(DoorPair& pair,vec2 from){
   if(pair.first==UINT32_MAX || pair.second==UINT32_MAX)return;
-  revealFromDoor(pair, from);
-  toggleDoor(pair.first,from);
-  toggleDoor(pair.second,from);
+  else if(pair.first==pair.second)return;
+  auto firstTrans = engine.componentManager.getComponent<Component::TRANSFORM>(pair.first).position;
+  auto secondTrans = engine.componentManager.getComponent<Component::TRANSFORM>(pair.second).position;
+  auto firstUv = engine.componentManager.getComponent<Component::UVRECT>(pair.first);
+  auto secondUv = engine.componentManager.getComponent<Component::UVRECT>(pair.second);
+  if((isHorizontalDoor(firstUv.uvMin) && isHorizontalDoor(secondUv.uvMin) && firstTrans.y==secondTrans.y)
+      || (isVerticalDoor(firstUv.uvMin)&&isVerticalDoor(secondUv.uvMin)&&firstTrans.x==secondTrans.x)){
+    revealFromDoor(pair, from);
+    toggleDoor(pair.first,from);
+    toggleDoor(pair.second,from);
+  }
+}
+
+
+void TileMap::updateBackWallZ(){
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(player);
+  auto nearby = getNearbyTiles(trans.position);
+  for(auto& tile:nearby){
+    if(tile.type==TileType::Wall){
+      auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
+      if(isBackWall(uv.uvMin)){
+        auto wallTrans = engine.componentManager.getComponent<Component::TRANSFORM>(tile.id);
+        if(trans.position.y < wallTrans.position.y){
+          wallTrans.position.z=ENTITY_LAYER+1;
+        }else{
+          wallTrans.position.z=WALL_LAYER;
+        }
+        engine.componentManager.setComponent(tile.id, wallTrans);
+      }
+    }
+  }
 }

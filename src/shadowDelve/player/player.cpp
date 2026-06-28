@@ -10,12 +10,13 @@
 
 void Player::init(){
   id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},{12,18},0});
   if(showCollider){
     auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
-    engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},{12,18},0});
     collider = engine.makeRect(comp.position, {12,18});
   }
   setMode(MODE::IDLE);
+  tileMap.setPlayer(id);
 }
 
 void Player::animationFunction(const AnimationData& data){
@@ -124,10 +125,7 @@ void Player::handleInteract(){
     if(TileMap::isDoor(uv.uvMin)){
       auto pair = tileMap.getDoorPair(tile.id);
       if(pair.second!=UINT32_MAX)tileMap.toggleDoor(pair,trans.position);
-      if(doorPopUpIndex!=SIZE_MAX){
-        popUps[doorPopUpIndex].~KeyPopUp();
-        doorPopUpIndex=SIZE_MAX;
-      }
+      if(popUps.contains("door"))popUps.erase("door");
       break;
     };
   }
@@ -181,8 +179,7 @@ void Player::AddDoorPopUpOnNearbyDoor(){
         int x=-BLOCKSIZE/2;
         if(TileMap::isLeftDoor(uv.uvMin))x*=-1;
         auto doorTrans = engine.componentManager.getComponent<Component::TRANSFORM>(tile.id);
-        doorPopUpIndex=popUps.size();
-        popUps.emplace_back(engine,vec2{doorTrans.position.x+x,doorTrans.position.y-BLOCKSIZE},'E');
+        popUps.try_emplace("door",engine,vec2{doorTrans.position.x+x,doorTrans.position.y-BLOCKSIZE},'E');
         needDoorPopUp=false;
         break;
       };

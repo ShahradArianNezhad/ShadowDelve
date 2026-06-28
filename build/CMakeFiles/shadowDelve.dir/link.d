@@ -8,8 +8,8 @@
   CMakeFiles/shadowDelve.dir/src/shadowDelve/shadowDelve.cpp.o \
   CMakeFiles/shadowDelve.dir/src/shadowDelve/tileMap/tileMap.cpp.o \
   CMakeFiles/shadowDelve.dir/src/utilities/keyPopUp/keyPopUp.cpp.o \
-  vireon/libvireon.a \
-  vireon/libglad.a \
+  Vireon/libvireon.a \
+  Vireon/libglad.a \
   /usr/lib/libglfw.so.3.4 \
   /usr/lib/libGLX.so \
   /usr/lib/libOpenGL.so \
@@ -84,9 +84,9 @@ CMakeFiles/shadowDelve.dir/src/shadowDelve/tileMap/tileMap.cpp.o:
 
 CMakeFiles/shadowDelve.dir/src/utilities/keyPopUp/keyPopUp.cpp.o:
 
-vireon/libvireon.a:
+Vireon/libvireon.a:
 
-vireon/libglad.a:
+Vireon/libglad.a:
 
 /usr/lib/libglfw.so.3.4:
 

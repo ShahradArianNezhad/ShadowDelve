@@ -19,10 +19,7 @@ KeyPopUp::KeyPopUp(Engine& e,vec2 position,char key):engine(e){
 }
 
 KeyPopUp::~KeyPopUp(){
-  ScheduleManager::cancel_task(animationTask);
-  engine.entityManager.deleteEntity(id);
+  if(animationTask!=UINT32_MAX)ScheduleManager::cancel_task(animationTask);
+  if(id!=UINT32_MAX)engine.entityManager.deleteEntity(id);
 }
-
-
-
 

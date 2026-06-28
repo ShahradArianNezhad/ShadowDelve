@@ -1,7 +1,7 @@
 /home/shahrad/Programming/shadowDelve/build/CMakeFiles/shadowDelve.dir
 /home/shahrad/Programming/shadowDelve/build/CMakeFiles/edit_cache.dir
 /home/shahrad/Programming/shadowDelve/build/CMakeFiles/rebuild_cache.dir
-/home/shahrad/Programming/shadowDelve/build/vireon/CMakeFiles/vireon.dir
-/home/shahrad/Programming/shadowDelve/build/vireon/CMakeFiles/glad.dir
-/home/shahrad/Programming/shadowDelve/build/vireon/CMakeFiles/edit_cache.dir
-/home/shahrad/Programming/shadowDelve/build/vireon/CMakeFiles/rebuild_cache.dir
+/home/shahrad/Programming/shadowDelve/build/Vireon/CMakeFiles/vireon.dir
+/home/shahrad/Programming/shadowDelve/build/Vireon/CMakeFiles/glad.dir
+/home/shahrad/Programming/shadowDelve/build/Vireon/CMakeFiles/edit_cache.dir
+/home/shahrad/Programming/shadowDelve/build/Vireon/CMakeFiles/rebuild_cache.dir

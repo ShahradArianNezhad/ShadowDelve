@@ -14,4 +14,5 @@ void ShadowDelve::init(){
 
 void ShadowDelve::update(double dt){
   player.update(dt);
+  tileMap.update(dt);
 }

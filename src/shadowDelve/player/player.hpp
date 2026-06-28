@@ -37,8 +37,7 @@ class Player {
   EntityId collider;
 
   bool needDoorPopUp=true;
-  size_t doorPopUpIndex=SIZE_MAX;
-  std::vector<KeyPopUp> popUps;
+  std::unordered_map<std::string,KeyPopUp> popUps;
 
   void applyVelocity(double dt);
   void updateFacingDirection();

@@ -176,8 +176,8 @@ shadowDelve_EXTERNAL_OBJECTS =
 /home/shahrad/Programming/shadowDelve/shadowDelve: CMakeFiles/shadowDelve.dir/src/utilities/keyPopUp/keyPopUp.cpp.o
 /home/shahrad/Programming/shadowDelve/shadowDelve: CMakeFiles/shadowDelve.dir/build.make
 /home/shahrad/Programming/shadowDelve/shadowDelve: CMakeFiles/shadowDelve.dir/compiler_depend.ts
-/home/shahrad/Programming/shadowDelve/shadowDelve: vireon/libvireon.a
-/home/shahrad/Programming/shadowDelve/shadowDelve: vireon/libglad.a
+/home/shahrad/Programming/shadowDelve/shadowDelve: Vireon/libvireon.a
+/home/shahrad/Programming/shadowDelve/shadowDelve: Vireon/libglad.a
 /home/shahrad/Programming/shadowDelve/shadowDelve: /usr/lib/libglfw.so.3.4
 /home/shahrad/Programming/shadowDelve/shadowDelve: /usr/lib/libGLX.so
 /home/shahrad/Programming/shadowDelve/shadowDelve: /usr/lib/libOpenGL.so

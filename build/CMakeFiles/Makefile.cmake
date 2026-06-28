@@ -8,12 +8,12 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
   "/home/shahrad/Programming/shadowDelve/CMakeLists.txt"
+  "/home/shahrad/Programming/shadowDelve/Vireon/CMakeLists.txt"
   "CMakeFiles/4.3.3/CMakeCCompiler.cmake"
   "CMakeFiles/4.3.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/4.3.3/CMakeSystem.cmake"
   "CMakeFiles/VerifyGlobs.cmake"
   "CMakeFiles/cmake.verify_globs"
-  "/home/shahrad/Programming/shadowDelve/vireon/CMakeLists.txt"
   "/usr/lib/cmake/glfw3/glfw3Config.cmake"
   "/usr/lib/cmake/glfw3/glfw3ConfigVersion.cmake"
   "/usr/lib/cmake/glfw3/glfw3Targets-none.cmake"
@@ -68,12 +68,12 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "vireon/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Vireon/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/shadowDelve.dir/DependInfo.cmake"
-  "vireon/CMakeFiles/vireon.dir/DependInfo.cmake"
-  "vireon/CMakeFiles/glad.dir/DependInfo.cmake"
+  "Vireon/CMakeFiles/vireon.dir/DependInfo.cmake"
+  "Vireon/CMakeFiles/glad.dir/DependInfo.cmake"
   )

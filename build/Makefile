@@ -147,7 +147,7 @@ vireon: cmake_check_build_system
 
 # fast build rule for target.
 vireon/fast:
-	$(MAKE) $(MAKESILENT) -f vireon/CMakeFiles/vireon.dir/build.make vireon/CMakeFiles/vireon.dir/build
+	$(MAKE) $(MAKESILENT) -f Vireon/CMakeFiles/vireon.dir/build.make Vireon/CMakeFiles/vireon.dir/build
 .PHONY : vireon/fast
 
 #=============================================================================
@@ -160,7 +160,7 @@ glad: cmake_check_build_system
 
 # fast build rule for target.
 glad/fast:
-	$(MAKE) $(MAKESILENT) -f vireon/CMakeFiles/glad.dir/build.make vireon/CMakeFiles/glad.dir/build
+	$(MAKE) $(MAKESILENT) -f Vireon/CMakeFiles/glad.dir/build.make Vireon/CMakeFiles/glad.dir/build
 .PHONY : glad/fast
 
 src/main.o: src/main.cpp.o

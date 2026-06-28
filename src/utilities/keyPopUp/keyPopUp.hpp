@@ -6,8 +6,8 @@
 
 class KeyPopUp{
   Engine& engine;
-  EntityId id;
-  TaskId animationTask;
+  EntityId id=UINT32_MAX;
+  TaskId animationTask=UINT32_MAX;
   int currFrame=0;
   
   public:
