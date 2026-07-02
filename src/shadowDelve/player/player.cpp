@@ -40,6 +40,9 @@ void Player::setMode(MODE mode){
     case MODE::MOVE:
       data=moveAnimationData;
       break;
+    case MODE::ATTACK:
+      data=basicMelleAttackAnimationData;
+      break;
   }
 
   animationFrame=0;
@@ -95,10 +98,12 @@ void Player::updatePosition(double dt){
 }
 
 void Player::updateVelocity(){
-  if(engine.inputHandler.checkKeyPress(Key::W))velocity.y=-1;
-  else if(engine.inputHandler.checkKeyPress(Key::S))velocity.y=1;
-  if(engine.inputHandler.checkKeyPress(Key::A))velocity.x=-1;
-  else if(engine.inputHandler.checkKeyPress(Key::D))velocity.x=1;
+  vec2 v;
+  if(engine.inputHandler.checkKeyPress(Key::W))v.y=-1;
+  else if(engine.inputHandler.checkKeyPress(Key::S))v.y=1;
+  if(engine.inputHandler.checkKeyPress(Key::A))v.x=-1;
+  else if(engine.inputHandler.checkKeyPress(Key::D))v.x=1;
+  velocity=v;
 }
 
 void Player::updateFacingDirection(){
@@ -132,7 +137,7 @@ void Player::handleInteract(){
 }
 
 void Player::dash(){
-  if(canDash){
+  if(!locked && canDash){
     dashing=true;
     canDash=false;
     auto pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
@@ -166,8 +171,16 @@ void Player::dash(){
 
 void Player::handleInput(){
   if(!dashing)updateVelocity();
-  if(engine.inputHandler.checkKeyPress(Key::LeftShift))dash();
+  if(engine.inputHandler.checkKeyPress(Key::LeftShift)&&mode!=MODE::ATTACK)dash();
   if(engine.inputHandler.checkKeyPress(Key::E))handleInteract();
+  if(engine.inputHandler.checkMousePress(Mouse::LEFT)&&!dashing)attack();
+  else if(mode==MODE::ATTACK && !locked)setMode(MODE::IDLE);
+}
+
+void Player::attack(){
+  setMode(MODE::ATTACK);
+  locked=true;
+  ScheduleManager::do_after(basicMelleAttackAnimationData.secsPerFrame*(basicMelleAttackAnimationData.maxFrames+1),[this](){locked=false;});
 }
 
 void Player::AddDoorPopUpOnNearbyDoor(){
@@ -214,18 +227,24 @@ void Player::updateTrails(){
 }
 
 
+void Player::handleMove(double dt){
+  if(!locked){
+    updateFacingDirection();
+    updatePosition(dt);
+  }
+}
+
+void Player::updateDash(double dt){
+    updateTrails();
+    dashTimer+=dt;
+}
 
 void Player::update(double dt){
   makePopUps();
   handleInput();
-  updateFacingDirection();
-  updatePosition(dt);
+  handleMove(dt);
   centerCameraOnPlayer();
-  if(!dashing)velocity={0,0};
-  else{
-    updateTrails();
-    dashTimer+=dt;
-  }
+  if(dashing)updateDash(dt);
 }
 
 

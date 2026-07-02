@@ -13,7 +13,8 @@ class Player {
 
   enum class MODE{
     IDLE,
-    MOVE
+    MOVE,
+    ATTACK,
   };
 
   static constexpr float uvSegmentsX=9.0f;
@@ -21,6 +22,7 @@ class Player {
   static constexpr int maxSpeed=200;
   static constexpr AnimationData idleAnimationData{0,5,0.18f};
   static constexpr AnimationData moveAnimationData{1,7,0.1f};
+  static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
 
 
   EntityId id;
@@ -32,6 +34,7 @@ class Player {
   vec2 velocity{0,0};
   bool dashing=false;
   bool canDash=true;
+  bool locked=false;
   double dashTimer=0;
   EntityId trail1=UINT32_MAX,trail2=UINT32_MAX,trail3=UINT32_MAX;
   EntityId collider;
@@ -51,6 +54,9 @@ class Player {
   void makePopUps();
   void AddDoorPopUpOnNearbyDoor();
   void updateTrails();
+  void attack();
+  void handleMove(double dt);
+  void updateDash(double dt);
 
   public:
     Player(Engine& e,TileMap& t):engine(e),tileMap(t){};
