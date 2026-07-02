@@ -712,18 +712,29 @@ void TileMap::toggleDoor(DoorPair& pair,vec2 from){
 
 void TileMap::updateBackWallZ(){
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(player);
-  auto nearby = getNearbyTiles(trans.position);
-  for(auto& tile:nearby){
-    if(tile.type==TileType::Wall){
-      auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
-      if(isBackWall(uv.uvMin)){
-        auto wallTrans = engine.componentManager.getComponent<Component::TRANSFORM>(tile.id);
-        if(trans.position.y < wallTrans.position.y){
-          wallTrans.position.z=ENTITY_LAYER+1;
-        }else{
-          wallTrans.position.z=WALL_LAYER;
+  auto [gridX,gridY] = positionToGridCords(trans.position);
+
+  for(int i=-1;i<=1;i++){
+    for(int j=-1;j<=1;j++){
+      for(auto tile:tileMap[gridX+i][gridY+j]){
+        if(tile.type==TileType::Wall){
+          auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
+          if(isBackWall(uv.uvMin)){
+            auto wallTrans = engine.componentManager.getComponent<Component::TRANSFORM>(tile.id);
+            auto lastTile = tileMap[gridX+i][gridY+j].back().id;
+            auto lastTileUv = engine.componentManager.getComponent<Component::UVRECT>(lastTile);
+            auto lastTileTrans = engine.componentManager.getComponent<Component::TRANSFORM>(lastTile);
+            if(trans.position.y < wallTrans.position.y){
+              wallTrans.position.z=ENTITY_LAYER+1;
+              if(isHorizontalTorch(lastTileUv.uvMin))lastTileTrans.position.z=ENTITY_LAYER+2;
+            }else{
+              wallTrans.position.z=WALL_LAYER;
+              if(isHorizontalTorch(lastTileUv.uvMin))lastTileTrans.position.z=WALL_LAYER+1;
+            }
+            engine.componentManager.setComponent(tile.id, wallTrans);
+            if(isHorizontalTorch(lastTileUv.uvMin))engine.componentManager.setComponent(lastTile, lastTileTrans);
+          }
         }
-        engine.componentManager.setComponent(tile.id, wallTrans);
       }
     }
   }
