@@ -36,7 +36,6 @@ void Player::setMode(MODE mode){
     case MODE::IDLE:
       data=idleAnimationData;
       break;
-
     case MODE::MOVE:
       data=moveAnimationData;
       break;
@@ -98,7 +97,7 @@ void Player::updatePosition(double dt){
 }
 
 void Player::updateVelocity(){
-  vec2 v;
+  vec2 v{0,0};
   if(engine.inputHandler.checkKeyPress(Key::W))v.y=-1;
   else if(engine.inputHandler.checkKeyPress(Key::S))v.y=1;
   if(engine.inputHandler.checkKeyPress(Key::A))v.x=-1;
@@ -228,8 +227,8 @@ void Player::updateTrails(){
 
 
 void Player::handleMove(double dt){
+  updateFacingDirection();
   if(!locked){
-    updateFacingDirection();
     updatePosition(dt);
   }
 }
