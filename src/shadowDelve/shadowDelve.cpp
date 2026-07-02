@@ -1,6 +1,7 @@
 #include "shadowDelve.hpp"
 
 void ShadowDelve::init(){
+  Logger::setLogLevel(LogLevel::Info);
   srand(time(0));
   engine.setAmbient(0.3);
   engine.setTargetFPS(60);

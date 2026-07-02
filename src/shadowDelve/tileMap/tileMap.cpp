@@ -437,7 +437,6 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
         else position.z=z;
 
         auto id =engine.makeSprite(position,"./assets/Dungeon_Tileset.png",uv,{uv.x+1/10.0,uv.y+1/10.0});
-        if(isSideTorch(uv))LOG_WARN("SIZDE TORCH Z = {}",position.z);
         if(hidden){
           auto render = engine.componentManager.getComponent<Component::RENDER>(id);
           render.visible=false;
