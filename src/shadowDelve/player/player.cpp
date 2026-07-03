@@ -39,8 +39,11 @@ void Player::setMode(MODE mode){
     case MODE::MOVE:
       data=moveAnimationData;
       break;
-    case MODE::ATTACK:
+    case MODE::BASIC_ATTACK:
       data=basicMelleAttackAnimationData;
+      break;
+    case MODE::HEAVY_ATTACK:
+      data=heavyMelleAttackAnimationData;
       break;
   }
 
@@ -50,30 +53,24 @@ void Player::setMode(MODE mode){
 }
 
 
-void Player::applyVelocity(double dt){
+void Player::applyVelocity(vec2 v){
     auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
     auto nearbyTiles = TileMap::getNearbyTiles(comp.position);
-    auto normalVelocity = glm::normalize(velocity);
-    if(dashing){
-      normalVelocity.x*=dashSpeedMult;
-      normalVelocity.y*=dashSpeedMult;
-    }
 
-
-    comp.position.x+=normalVelocity.x*maxSpeed*dt;
+    comp.position.x+=v.x;
     engine.componentManager.setComponent(id, comp);
     for(auto& tile:nearbyTiles){
       if(tile.type==TileType::Wall && engine.rectIsColliding(tile.id, id)){
-        comp.position.x-=normalVelocity.x*maxSpeed*dt;
+        comp.position.x-=v.x;
         engine.componentManager.setComponent(id, comp);
       }
     }
 
-    comp.position.y+=normalVelocity.y*maxSpeed*dt;
+    comp.position.y+=v.y;
     engine.componentManager.setComponent(id, comp);
     for(auto& tile:nearbyTiles){
       if(tile.type==TileType::Wall && engine.rectIsColliding(tile.id, id)){
-        comp.position.y-=normalVelocity.y*maxSpeed*dt;
+        comp.position.y-=v.y;
         engine.componentManager.setComponent(id, comp);
       }
     }
@@ -91,7 +88,10 @@ void Player::applyVelocity(double dt){
 
 void Player::updatePosition(double dt){
   if(glm::length(velocity)>0.0f){
-    applyVelocity(dt);
+    vec2 v = glm::normalize(velocity);
+    v.x *= maxSpeed*dt;
+    v.y *= maxSpeed*dt;
+    applyVelocity(v);
     setMode(MODE::MOVE);
   }else if(mode==MODE::MOVE)setMode(MODE::IDLE);   
 }
@@ -140,9 +140,10 @@ void Player::dash(){
     dashing=true;
     canDash=false;
     auto pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
-    trail1 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
-    trail2 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
-    trail3 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
+    auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
+    trail1 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
+    trail2 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
+    trail3 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
     auto render = engine.componentManager.getComponent<Component::RENDER>(trail1); 
     render.color &= render.color & 0xFFFFFFBB;
     engine.componentManager.setComponent(trail1,render);
@@ -168,16 +169,33 @@ void Player::dash(){
 
 void Player::handleInput(){
   if(!dashing)updateVelocity();
-  if(engine.inputHandler.checkKeyPress(Key::LeftShift)&&mode!=MODE::ATTACK)dash();
+  if(engine.inputHandler.checkKeyPress(Key::LeftShift)&&!locked)dash();
   if(engine.inputHandler.checkKeyPress(Key::E))handleInteract();
-  if(engine.inputHandler.checkMousePress(Mouse::LEFT)&&!dashing)attack();
-  else if(mode==MODE::ATTACK && !locked)setMode(MODE::IDLE);
+  if(engine.inputHandler.checkMousePress(Mouse::LEFT))basicAttack();
+  else if(engine.inputHandler.checkMousePress(Mouse::RIGHT) && glm::length(velocity)>0 && canDash)heavyAttack();
 }
 
-void Player::attack(){
-  setMode(MODE::ATTACK);
+void Player::basicAttack(){
+  if(!dashing && !locked ){
+  setMode(MODE::BASIC_ATTACK);
   locked=true;
-  ScheduleManager::do_after(basicMelleAttackAnimationData.secsPerFrame*(basicMelleAttackAnimationData.maxFrames+1),[this](){locked=false;});
+  ScheduleManager::do_after(basicMelleAttackAnimationData.secsPerFrame*(basicMelleAttackAnimationData.maxFrames+1),[this](){
+      locked=false;
+      setMode(MODE::IDLE);
+      });
+  }
+}
+
+void Player::heavyAttack(){
+  if(!dashing && !locked ){
+    dash();
+    setMode(MODE::HEAVY_ATTACK);
+    locked=true;
+    ScheduleManager::do_after(heavyMelleAttackAnimationData.secsPerFrame*(heavyMelleAttackAnimationData.maxFrames+1),[this](){
+        locked=false;
+        setMode(MODE::IDLE);
+        });
+  }
 }
 
 void Player::AddDoorPopUpOnNearbyDoor(){
@@ -208,40 +226,50 @@ void Player::updateTrails(){
   }
   auto normalVelocity = glm::normalize(velocity);
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+  auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
   trans.position.z-=1;
 
   trans.position.x-=normalVelocity.x*mult*100;
   trans.position.y-=normalVelocity.y*mult*100;
   engine.componentManager.setComponent(trail1, trans);
+  engine.componentManager.setComponent(trail1, uv);
 
   trans.position.x-=normalVelocity.x*mult*150;
   trans.position.y-=normalVelocity.y*mult*150;
   engine.componentManager.setComponent(trail2, trans);
+  engine.componentManager.setComponent(trail2, uv);
 
   trans.position.x-=normalVelocity.x*mult*200;
   trans.position.y-=normalVelocity.y*mult*200;
   engine.componentManager.setComponent(trail3, trans);
+  engine.componentManager.setComponent(trail3, uv);
 }
 
 
 void Player::handleMove(double dt){
-  updateFacingDirection();
   if(!locked){
+    updateFacingDirection();
     updatePosition(dt);
   }
 }
 
 void Player::updateDash(double dt){
+  if(glm::length(velocity)>0.0f){
+    vec2 v = glm::normalize(velocity);
+    v.x*=maxSpeed*dt*dashSpeedMult;
+    v.y*=maxSpeed*dt*dashSpeedMult;
+    applyVelocity(v);
     updateTrails();
     dashTimer+=dt;
+  }
 }
 
 void Player::update(double dt){
   makePopUps();
   handleInput();
   handleMove(dt);
-  centerCameraOnPlayer();
   if(dashing)updateDash(dt);
+  centerCameraOnPlayer();
 }
 
 

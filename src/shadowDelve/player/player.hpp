@@ -14,7 +14,8 @@ class Player {
   enum class MODE{
     IDLE,
     MOVE,
-    ATTACK,
+    BASIC_ATTACK,
+    HEAVY_ATTACK
   };
 
   static constexpr float uvSegmentsX=9.0f;
@@ -23,6 +24,7 @@ class Player {
   static constexpr AnimationData idleAnimationData{0,5,0.18f};
   static constexpr AnimationData moveAnimationData{1,7,0.1f};
   static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
+  static constexpr AnimationData heavyMelleAttackAnimationData{3,5,0.06f};
 
 
   EntityId id;
@@ -45,7 +47,7 @@ class Player {
   bool needDoorPopUp=true;
   std::unordered_map<std::string,KeyPopUp> popUps;
 
-  void applyVelocity(double dt);
+  void applyVelocity(vec2 v);
   void updateFacingDirection();
   void animationFunction(const AnimationData& data);
   void updateVelocity();
@@ -57,7 +59,8 @@ class Player {
   void makePopUps();
   void AddDoorPopUpOnNearbyDoor();
   void updateTrails();
-  void attack();
+  void basicAttack();
+  void heavyAttack();
   void handleMove(double dt);
   void updateDash(double dt);
 
