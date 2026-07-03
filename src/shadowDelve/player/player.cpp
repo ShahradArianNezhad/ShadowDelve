@@ -55,8 +55,8 @@ void Player::applyVelocity(double dt){
     auto nearbyTiles = TileMap::getNearbyTiles(comp.position);
     auto normalVelocity = glm::normalize(velocity);
     if(dashing){
-      normalVelocity.x*=3;
-      normalVelocity.y*=3;
+      normalVelocity.x*=dashSpeedMult;
+      normalVelocity.y*=dashSpeedMult;
     }
 
 
@@ -150,7 +150,7 @@ void Player::dash(){
     engine.componentManager.setComponent(trail2,render);
     render.color &= render.color & 0xFFFFFF22;
     engine.componentManager.setComponent(trail3,render);
-    ScheduleManager::do_after(0.2, [this](){
+    ScheduleManager::do_after(dashTime, [this](){
         dashTimer=0;
         dashing=false;
         engine.entityManager.deleteEntity(trail1);
@@ -161,9 +161,7 @@ void Player::dash(){
         trail3=UINT32_MAX;
         
     });
-    ScheduleManager::do_after(1, [this](){canDash=true;});
-    ScheduleManager::do_after(0.01, [this](){
-    });
+    ScheduleManager::do_after(dashCooldown, [this](){canDash=true;});
   }
 }
 
@@ -204,8 +202,8 @@ void Player::makePopUps(){
 
 void Player::updateTrails(){
   auto mult=dashTimer;
-  if(dashTimer>0.1){
-    mult = 0.2 - dashTimer;
+  if(dashTimer>dashTime/2){
+    mult = dashTime - dashTimer;
     mult = std::max(mult, 0.0);
   }
   auto normalVelocity = glm::normalize(velocity);

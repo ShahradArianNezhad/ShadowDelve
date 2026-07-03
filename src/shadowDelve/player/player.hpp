@@ -34,6 +34,9 @@ class Player {
   vec2 velocity{0,0};
   bool dashing=false;
   bool canDash=true;
+  int dashSpeedMult = 3; 
+  float dashTime = 0.2f;
+  float dashCooldown = 1.0f;
   bool locked=false;
   double dashTimer=0;
   EntityId trail1=UINT32_MAX,trail2=UINT32_MAX,trail3=UINT32_MAX;
