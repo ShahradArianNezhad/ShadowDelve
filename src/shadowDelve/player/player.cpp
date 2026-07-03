@@ -141,26 +141,22 @@ void Player::dash(){
     canDash=false;
     auto pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
     auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
-    trail1 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
-    trail2 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
-    trail3 = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
-    auto render = engine.componentManager.getComponent<Component::RENDER>(trail1); 
-    render.color &= render.color & 0xFFFFFFBB;
-    engine.componentManager.setComponent(trail1,render);
-    render.color &= render.color & 0xFFFFFF88;
-    engine.componentManager.setComponent(trail2,render);
-    render.color &= render.color & 0xFFFFFF22;
-    engine.componentManager.setComponent(trail3,render);
+    for(int i=0;i<trailCount;i++){
+      auto& trail = trails[i];
+      trail = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
+      auto render = engine.componentManager.getComponent<Component::RENDER>(trail); 
+      uint32_t color = 34 + i*70;
+      color |= 0xFFFFFF00;
+      render.color &= color;
+      engine.componentManager.setComponent(trail,render);
+    }
     ScheduleManager::do_after(dashTime, [this](){
         dashTimer=0;
         dashing=false;
-        engine.entityManager.deleteEntity(trail1);
-        engine.entityManager.deleteEntity(trail2);
-        engine.entityManager.deleteEntity(trail3);
-        trail1=UINT32_MAX;
-        trail2=UINT32_MAX;
-        trail3=UINT32_MAX;
-        
+        for(auto& trail:trails){
+          engine.entityManager.deleteEntity(trail);
+          trail=UINT32_MAX;
+        }
     });
     ScheduleManager::do_after(dashCooldown, [this](){canDash=true;});
   }
@@ -229,20 +225,13 @@ void Player::updateTrails(){
   auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
   trans.position.z-=1;
 
-  trans.position.x-=normalVelocity.x*mult*100;
-  trans.position.y-=normalVelocity.y*mult*100;
-  engine.componentManager.setComponent(trail1, trans);
-  engine.componentManager.setComponent(trail1, uv);
-
-  trans.position.x-=normalVelocity.x*mult*150;
-  trans.position.y-=normalVelocity.y*mult*150;
-  engine.componentManager.setComponent(trail2, trans);
-  engine.componentManager.setComponent(trail2, uv);
-
-  trans.position.x-=normalVelocity.x*mult*200;
-  trans.position.y-=normalVelocity.y*mult*200;
-  engine.componentManager.setComponent(trail3, trans);
-  engine.componentManager.setComponent(trail3, uv);
+  for(int i=0;i<trailCount;i++){
+    auto& trail = trails[i];
+    trans.position.x-=normalVelocity.x*mult*(i+1)*70;
+    trans.position.y-=normalVelocity.y*mult*(i+1)*70;
+    engine.componentManager.setComponent(trail, trans);
+    engine.componentManager.setComponent(trail, uv);
+  }
 }
 
 

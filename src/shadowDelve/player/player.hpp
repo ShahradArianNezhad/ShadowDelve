@@ -41,7 +41,8 @@ class Player {
   float dashCooldown = 1.0f;
   bool locked=false;
   double dashTimer=0;
-  EntityId trail1=UINT32_MAX,trail2=UINT32_MAX,trail3=UINT32_MAX;
+  static constexpr size_t trailCount=3;
+  EntityId trails[trailCount];
   EntityId collider;
 
   bool needDoorPopUp=true;
