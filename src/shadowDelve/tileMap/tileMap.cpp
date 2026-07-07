@@ -1,6 +1,7 @@
 #include "engine/entityManager/component/components.hpp"
 #include "engine/meshManager/meshManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
+#include "shadowDelve/enemies/skeleton/skeleton.hpp"
 #include "utilities/consts.hpp"
 #include "vireon.hpp"
 #include "tileMap.hpp"
@@ -9,6 +10,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
+#include <memory>
 #include <string>
 
 
@@ -16,7 +18,9 @@ void TileMap::init(){
   generateMap();
 }
 
-void TileMap::update(double){
+void TileMap::update(double dt){
+  for(auto& e:spawnedEnemies)e->update(dt);
+
   updateBackWallZ();
 }
 
@@ -246,23 +250,9 @@ nlohmann::json TileMap::parseJson(const std::string& path){
 void TileMap::spawnEntitiesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
     for(auto& [tileX,tileYtoName]:data["entity"].items()){
       for(auto& [tileY,name]:tileYtoName.items()){
-        EntityId id;
         auto gridX = std::stoi(tileX)+dx;
         auto gridY = std::stoi(tileY)+dy;
-        vec3 position = {gridX*BLOCKSIZE - BLOCKSIZE/2,gridY*BLOCKSIZE - BLOCKSIZE/2,ENTITY_LAYER};
-        if(name=="skeleton")     id =engine.makeSprite(position,"./assets/skeleton/skeleton2_idle.png",{0,0},{1.0/6,1.0});
-        else if(name=="vampire") id =engine.makeSprite(position,"./assets/vampire/vampire_idle.png",{0,0},{1.0/6,1.0});
-        else if(name=="soldier") id =engine.makeSprite(position,"./assets/Soldier/Soldier-Idle.png",{0,0},{1.0/6,1.0});
-        else{
-          LOG_ERROR("INVALID NAME IN ENTITY LIST");
-          return;
-        }
-        if(hidden){
-          auto render = engine.componentManager.getComponent<Component::RENDER>(id);
-          render.visible=false;
-          engine.componentManager.setComponent(id, render);
-        }
-        enemyMap[gridX][gridY].push_back(Enemy{id});
+        enemyMap[gridX][gridY].push_back(Enemy{name});
       }
     }
 }
@@ -570,9 +560,7 @@ void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){
     }
     if(hasEnemy(gridCoords.x, gridCoords.y)){
       for(auto enemy:enemyMap[gridCoords.x][gridCoords.y]){
-        auto render = engine.componentManager.getComponent<Component::RENDER>(enemy.id);
-        render.visible=true;
-        engine.componentManager.setComponent(enemy.id, render);
+        if(enemy.type=="skeleton")spawnedEnemies.emplace_back(std::make_unique<ScytheSkeleton>(vec2{gridCoords.x*BLOCKSIZE,gridCoords.y*BLOCKSIZE},engine));
       }
     }
     if(shouldEnd)return;
@@ -737,4 +725,17 @@ void TileMap::updateBackWallZ(){
       }
     }
   }
+}
+
+
+bool TileMap::hasWall(vec2 gridCords){
+  for(auto& tile : tileMap[gridCords.x][gridCords.y]){
+    auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
+    if(isWall(uv.uvMin))return true;
+  }
+  return false;
+}
+
+bool TileMap::isWalkable(vec2 gridCords){
+  return !isGridEmpty(gridCords.x, gridCords.y) && !hasWall(vec2{gridCords.x,gridCords.y});
 }

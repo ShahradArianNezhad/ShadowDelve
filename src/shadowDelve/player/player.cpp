@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "engine/entityManager/component/components.hpp"
+#include "engine/eventManager/eventManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
 #include "shadowDelve/tileMap/tileMap.hpp"
 #include "utilities/consts.hpp"
@@ -10,13 +11,16 @@
 
 void Player::init(){
   id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
-  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},{12,18},0});
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},colliderScale,0});
   if(showCollider){
     auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
-    collider = engine.makeRect(comp.position, {12,18});
+    collider = engine.makeRect(comp.position, colliderScale);
   }
   setMode(MODE::IDLE);
   tileMap.setPlayer(id);
+  EventManager::subscribe<PlayerDamagedEvent>([this](const PlayerDamagedEvent& e){
+      LOG_WARN("YOU GOT HIT");
+      });
 }
 
 void Player::animationFunction(const AnimationData& data){

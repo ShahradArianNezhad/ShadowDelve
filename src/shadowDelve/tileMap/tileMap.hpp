@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/engine.hpp"
 #include "json.hpp"
+#include "shadowDelve/enemies/enemy.hpp"
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -21,7 +22,7 @@ struct Tile{
   TileType type;
 };
 struct Enemy{
-  EntityId id;
+  std::string type;
 };
 
 
@@ -61,6 +62,7 @@ class TileMap{
   public:
     static inline std::unordered_map<int, std::unordered_map<int,std::vector<Tile>>> tileMap;
     static inline std::unordered_map<int, std::unordered_map<int,std::vector<Enemy>>> enemyMap;
+    std::vector<std::unique_ptr<EnemyEntity>> spawnedEnemies;
     [[nodiscard]] static std::vector<Tile> getNearbyTiles(vec2 position,int radius=1);
     static bool isGridEmpty(int gridX,int gridY);
     static bool hasEnemy(int gridX,int gridY);
@@ -82,8 +84,10 @@ class TileMap{
     static bool isCorner(vec2 uv);
     static bool isHorizontalTorch(vec2 uv);
     static bool isWall(vec2 uv);
+    bool isWalkable(vec2 gridCords);
+    bool hasWall(vec2 gridCords);
     DoorPair getDoorPair(EntityId door);
-    std::pair<int,int> positionToGridCords(vec2 pos);
+    [[nodiscard]] static std::pair<int,int> positionToGridCords(vec2 pos);
     void toggleDoor(DoorPair& pair,vec2 from={0,0});
     void toggleDoor(EntityId door,vec2 from={0,0});
     void setPlayer(EntityId id){player=id;}

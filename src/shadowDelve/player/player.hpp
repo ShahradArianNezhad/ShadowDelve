@@ -7,6 +7,10 @@
 #include "utilities/types.hpp"
 #include <cstdint>
 
+struct PlayerDamagedEvent{
+  EntityId from;
+  int damage;
+};
 
 
 class Player {
@@ -27,13 +31,13 @@ class Player {
   static constexpr AnimationData heavyMelleAttackAnimationData{3,5,0.06f};
 
 
-  EntityId id;
   TaskId animationJob=UINT32_MAX;
   int animationFrame=0;
   Engine& engine;
   TileMap& tileMap;
   MODE mode;
   vec2 velocity{0,0};
+  static constexpr vec2 colliderScale{12,18};
   bool dashing=false;
   bool canDash=true;
   int dashSpeedMult = 3; 
@@ -66,6 +70,7 @@ class Player {
   void updateDash(double dt);
 
   public:
+    static inline EntityId id;
     Player(Engine& e,TileMap& t):engine(e),tileMap(t){};
     void init();
     void setMode(MODE mode);
