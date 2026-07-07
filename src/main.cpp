@@ -1,7 +1,7 @@
 #include "shadowDelve/shadowDelve.hpp"
 #include "mapEditor/mapEditor.hpp"
 
-constexpr bool editorMode = true;
+constexpr bool editorMode = false;
 
 int main(){
   if(editorMode){

@@ -19,8 +19,16 @@ void Player::init(){
   setMode(MODE::IDLE);
   tileMap.setPlayer(id);
   EventManager::subscribe<PlayerDamagedEvent>([this](const PlayerDamagedEvent& e){
-      LOG_WARN("YOU GOT HIT");
+      auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+      auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(e.from).position;
+      vec2 dir = glm::normalize(vec2{enemyPos.x-playerPos.x,enemyPos.y-playerPos.y});
+      dir.x*=-7;
+      dir.y*=-7;
+      auto knockbackTask = ScheduleManager::do_every(0.01,[this, dir](){
+          applyVelocity(dir);
       });
+      ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
+  });
 }
 
 void Player::animationFunction(const AnimationData& data){
