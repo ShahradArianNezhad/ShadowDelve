@@ -23,7 +23,8 @@ class Player {
     MOVE,
     BASIC_ATTACK,
     HEAVY_ATTACK,
-    DAMAGED
+    DAMAGED,
+    DEATH
   };
 
   static constexpr float uvSegmentsX=9.0f;
@@ -34,6 +35,7 @@ class Player {
   static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
   static constexpr AnimationData heavyMelleAttackAnimationData{3,6,0.06f};
   static constexpr AnimationData DamagedAnimationData{5,4,0.03f};
+  static constexpr AnimationData DeathAnimationData{6,4,0.2f};
 
 
   int health=100;

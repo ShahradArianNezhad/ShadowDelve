@@ -28,7 +28,9 @@ void Player::init(){
           applyVelocity(dir);
       });
       ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
-      setMode(MODE::DAMAGED);
+      health-=e.damage;
+      if(health<=0)setMode(MODE::DEATH);
+      else setMode(MODE::DAMAGED);
   });
 }
 
@@ -60,6 +62,9 @@ void Player::setMode(MODE mode){
       break;
     case MODE::DAMAGED:
       data=DamagedAnimationData;
+      break;
+    case MODE::DEATH:
+      data=DeathAnimationData;
       break;
   }
 
@@ -276,6 +281,11 @@ void Player::updateDash(double dt){
 }
 
 void Player::update(double dt){
+  if(mode==MODE::DEATH && animationFrame==3){
+    ScheduleManager::cancel_task(animationJob);
+    animationFrame=0;
+  }
+  if(mode==MODE::DEATH)return;
   if(mode==MODE::DAMAGED && animationFrame==3)setMode(MODE::MOVE);
   if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
   makePopUps();
