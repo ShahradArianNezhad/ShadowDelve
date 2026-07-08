@@ -24,7 +24,8 @@ class Player {
     BASIC_ATTACK,
     HEAVY_ATTACK,
     DAMAGED,
-    DEATH
+    DEATH,
+    FALL
   };
 
   static constexpr float uvSegmentsX=9.0f;

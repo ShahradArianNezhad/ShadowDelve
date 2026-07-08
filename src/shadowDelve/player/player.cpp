@@ -66,6 +66,14 @@ void Player::setMode(MODE mode){
     case MODE::DEATH:
       data=DeathAnimationData;
       break;
+    case MODE::FALL:
+      ScheduleManager::cancel_task(animationJob);
+      animationJob = ScheduleManager::do_every(0.01, [this](){
+          auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+          if((render.color&0x000000FF) != 0)render.color-=5;
+          engine.componentManager.setComponent(id, render);
+      });
+      return;
   }
 
   animationFrame=0;
@@ -285,9 +293,14 @@ void Player::update(double dt){
     ScheduleManager::cancel_task(animationJob);
     animationFrame=0;
   }
-  if(mode==MODE::DEATH)return;
+  if(mode==MODE::DEATH || mode==MODE::FALL)return;
   if(mode==MODE::DAMAGED && animationFrame==3)setMode(MODE::MOVE);
   if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
+  if((mode==MODE::IDLE || mode==MODE::MOVE) && !dashing){
+    vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+    auto [gridX,gridY] = tileMap.positionToGridCords(pos);
+    if(tileMap.isGridEmpty(gridX, gridY))setMode(MODE::FALL);
+  }
   makePopUps();
   handleInput();
   handleMove(dt);
