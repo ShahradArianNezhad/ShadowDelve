@@ -156,7 +156,6 @@ std::pair<int,int> TileMap::findMatchingDoorDiff(nlohmann::json& data,DoorPair& 
       }
     }
   }else{
-    LOG_WARN("trying to add a room to a door that has no empty sides");
     return {INT32_MAX,INT32_MAX};
   }
   return {dx,dy};

@@ -6,8 +6,7 @@
 #include <queue>
 #include <unordered_set>
 
-EnemyEntity::EnemyEntity(Engine& e):engine(e){
-}
+EnemyEntity::EnemyEntity(Engine& e):engine(e){}
 
 
 void EnemyEntity::applyVelocity(vec2 v){
