@@ -30,7 +30,7 @@ class Skeleton : public EnemyEntity{
     TaskId animationTask=UINT32_MAX;
     static constexpr int attackRange = 34;
     static constexpr int roamSpeed = 30;
-    static constexpr int chaseSpeed = 60;
+    static constexpr int chaseSpeed = 150;
     virtual void setMode(MODE mode)=0;
     virtual void update(double dt)=0;
 
