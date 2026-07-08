@@ -28,6 +28,7 @@ void Player::init(){
           applyVelocity(dir);
       });
       ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
+      setMode(MODE::DAMAGED);
   });
 }
 
@@ -56,6 +57,9 @@ void Player::setMode(MODE mode){
       break;
     case MODE::HEAVY_ATTACK:
       data=heavyMelleAttackAnimationData;
+      break;
+    case MODE::DAMAGED:
+      data=DamagedAnimationData;
       break;
   }
 
@@ -104,7 +108,7 @@ void Player::updatePosition(double dt){
     v.x *= maxSpeed*dt;
     v.y *= maxSpeed*dt;
     applyVelocity(v);
-    setMode(MODE::MOVE);
+    if(mode!=MODE::DAMAGED)setMode(MODE::MOVE);
   }else if(mode==MODE::MOVE)setMode(MODE::IDLE);   
 }
 
@@ -272,6 +276,7 @@ void Player::updateDash(double dt){
 }
 
 void Player::update(double dt){
+  if(mode==MODE::DAMAGED && animationFrame==3)setMode(MODE::MOVE);
   if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
   makePopUps();
   handleInput();

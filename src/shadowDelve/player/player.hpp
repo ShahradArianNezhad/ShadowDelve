@@ -22,7 +22,8 @@ class Player {
     IDLE,
     MOVE,
     BASIC_ATTACK,
-    HEAVY_ATTACK
+    HEAVY_ATTACK,
+    DAMAGED
   };
 
   static constexpr float uvSegmentsX=9.0f;
@@ -32,6 +33,7 @@ class Player {
   static constexpr AnimationData moveAnimationData{1,7,0.1f};
   static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
   static constexpr AnimationData heavyMelleAttackAnimationData{3,6,0.06f};
+  static constexpr AnimationData DamagedAnimationData{5,4,0.03f};
 
 
   TaskId animationJob=UINT32_MAX;
