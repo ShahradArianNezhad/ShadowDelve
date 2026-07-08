@@ -192,6 +192,9 @@ void Player::basicAttack(){
       setMode(MODE::IDLE);
       });
   }
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{4,-3},{20,18}});
+  EventManager::emit(PlayerAttackedEvent{10});
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},colliderScale});
 }
 
 void Player::heavyAttack(){

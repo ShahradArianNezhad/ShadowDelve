@@ -12,6 +12,9 @@ struct PlayerDamagedEvent{
   int damage;
 };
 
+struct PlayerAttackedEvent{
+  int damage;
+};
 
 class Player {
 
