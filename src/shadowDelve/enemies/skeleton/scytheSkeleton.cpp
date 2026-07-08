@@ -74,6 +74,13 @@ void ScytheSkeleton::setMode(MODE mode){
           currFrame++;
       });
       break;
+    case MODE::FALL:
+      animationTask = ScheduleManager::do_every(0.01,[this](){
+          auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+          if((render.color&0x000000FF)!=0)render.color-=5;
+          engine.componentManager.setComponent(id, render);
+      });
+      break;
 
   }
   if(old_trans.scale.x<0){
@@ -88,6 +95,9 @@ void ScytheSkeleton::update(double dt){
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   auto d = getDist(pos, playerPos);
   if(d<300 && (mode==MODE::WALK || mode==MODE::IDLE))setMode(MODE::CHASE);
+  auto [gridX,gridY] = TileMap::positionToGridCords(pos);
+  if(TileMap::isGridEmpty(gridX, gridY))setMode(MODE::FALL);
+
   switch(mode){
     case MODE::IDLE:break;
     case MODE::WALK:
@@ -112,6 +122,8 @@ void ScytheSkeleton::update(double dt){
     case MODE::DAMAGED:
       break;
     case MODE::DEATH:
+      return;
+    case MODE::FALL:
       return;
   }
 }
