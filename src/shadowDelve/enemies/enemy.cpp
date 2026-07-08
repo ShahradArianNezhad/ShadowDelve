@@ -7,7 +7,6 @@
 #include <unordered_set>
 
 EnemyEntity::EnemyEntity(Engine& e):engine(e){
-  LOG_WARN("AXDD");
 }
 
 
@@ -79,7 +78,7 @@ std::vector<vec2> EnemyEntity::findPath(vec2 position){
       for(int j=-1;j<=1;j++){
         if(!visited.count(vec2{curr.x+i,curr.y+j})){
           if(i==0&&j==0)continue;
-          if(!isTileWalkable(vec2{curr.x+i,curr.y+j}))continue;
+          if(!isTileWalkable(vec2{curr.x+i,curr.y+j}) && vec2{curr.x+i,curr.y+j}!=goal)continue;
           if(i!=0&&j!=0&&(!isTileWalkable(vec2{curr.x+i,curr.y})||!isTileWalkable(vec2{curr.x,curr.y+j})))continue;
           visited.insert(vec2{curr.x+i,curr.y+j});
           queue.push(vec2{curr.x+i,curr.y+j});
