@@ -10,7 +10,8 @@ class Skeleton : public EnemyEntity{
       WALK,
       CHASE,
       DAMAGED,
-      ATTACK
+      ATTACK,
+      DEATH
     };
     float attackCooldown = 1.5;
     bool canAttack = true;

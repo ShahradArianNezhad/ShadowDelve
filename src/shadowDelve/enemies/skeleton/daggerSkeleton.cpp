@@ -69,6 +69,14 @@ void DaggerSkeleton::setMode(MODE mode){
           currFrame++;
       });
       break;
+    case MODE::DEATH:
+      engine.changeSprite(id,"assets/skeleton/skeleton1_death2.png",{0,0},{1.0f/17.0f,1});
+      animationTask = ScheduleManager::do_every(0.075,[this](){
+          if(currFrame==17){ScheduleManager::cancel_task(animationTask);return;}
+          engine.componentManager.setComponent(id, Component::UVRECT{{currFrame/17.0f,0},{(currFrame+1)/17.0f,1}});
+          currFrame++;
+      });
+      break;
   }
   if(old_trans.scale.x<0){
     auto new_trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
@@ -107,6 +115,8 @@ void DaggerSkeleton::update(double dt){
       break;
     case MODE::DAMAGED:
       break;
+    case MODE::DEATH:
+      return;
   }
 }
 

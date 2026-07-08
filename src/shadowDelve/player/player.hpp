@@ -36,6 +36,7 @@ class Player {
   static constexpr AnimationData DamagedAnimationData{5,4,0.03f};
 
 
+  int health=100;
   TaskId animationJob=UINT32_MAX;
   int animationFrame=0;
   Engine& engine;

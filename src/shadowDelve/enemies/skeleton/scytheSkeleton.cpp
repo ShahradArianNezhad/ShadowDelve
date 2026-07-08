@@ -66,6 +66,14 @@ void ScytheSkeleton::setMode(MODE mode){
           currFrame++;
       });
       break;
+    case MODE::DEATH:
+      engine.changeSprite(id,"assets/skeleton/skeleton2_death2.png",{0,0},{1.0f/15.0f,1});
+      animationTask = ScheduleManager::do_every(0.08,[this](){
+          if(currFrame==15){ScheduleManager::cancel_task(animationTask);return;}
+          engine.componentManager.setComponent(id, Component::UVRECT{{currFrame/15.0f,0},{(currFrame+1)/15.0f,1}});
+          currFrame++;
+      });
+      break;
 
   }
   if(old_trans.scale.x<0){
@@ -103,5 +111,7 @@ void ScytheSkeleton::update(double dt){
       break;
     case MODE::DAMAGED:
       break;
+    case MODE::DEATH:
+      return;
   }
 }

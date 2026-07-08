@@ -6,6 +6,7 @@
 
 class EnemyEntity{
   protected:
+    int health=50;
     EntityId id=UINT32_MAX,collider=UINT32_MAX;
     TaskId moveTask;
     Engine& engine;
