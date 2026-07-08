@@ -204,6 +204,9 @@ void Player::heavyAttack(){
     locked=true;
     ScheduleManager::do_after(heavyMelleAttackAnimationData.secsPerFrame*(heavyMelleAttackAnimationData.maxFrames+1),[this](){
         locked=false;
+        engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{4,-3},{20,20}});
+        EventManager::emit(PlayerAttackedEvent{10});
+        engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},colliderScale});
         setMode(MODE::IDLE);
         });
   }
@@ -269,6 +272,7 @@ void Player::updateDash(double dt){
 }
 
 void Player::update(double dt){
+  if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
   makePopUps();
   handleInput();
   handleMove(dt);

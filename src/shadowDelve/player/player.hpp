@@ -31,7 +31,7 @@ class Player {
   static constexpr AnimationData idleAnimationData{0,5,0.18f};
   static constexpr AnimationData moveAnimationData{1,7,0.1f};
   static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
-  static constexpr AnimationData heavyMelleAttackAnimationData{3,5,0.06f};
+  static constexpr AnimationData heavyMelleAttackAnimationData{3,6,0.06f};
 
 
   TaskId animationJob=UINT32_MAX;
