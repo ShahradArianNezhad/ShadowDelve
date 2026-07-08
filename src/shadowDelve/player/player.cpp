@@ -10,7 +10,7 @@
 
 
 void Player::init(){
-  id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
+  id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier2.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
   engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},colliderScale,0});
   if(showCollider){
     auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
