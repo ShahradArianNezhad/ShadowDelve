@@ -114,3 +114,5 @@ vec2 EnemyEntity::getRandomMove(){
     return vec2{(gridX+deltaX)*BLOCKSIZE,(gridY+deltaY)*BLOCKSIZE};
   }
 }
+
+

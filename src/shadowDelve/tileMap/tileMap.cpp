@@ -3,6 +3,7 @@
 #include "engine/scheduleManager/scheduleManager.hpp"
 #include "shadowDelve/enemies/skeleton/daggerSkeleton.hpp"
 #include "shadowDelve/enemies/skeleton/scytheSkeleton.hpp"
+#include "shadowDelve/enemies/vampire/vampire.hpp"
 #include "utilities/consts.hpp"
 #include "vireon.hpp"
 #include "tileMap.hpp"
@@ -564,6 +565,8 @@ void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){
           int num = random()%3;
           if(num>=1)spawnedEnemies.emplace_back(std::make_unique<ScytheSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
           else spawnedEnemies.emplace_back(std::make_unique<DaggerSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
+        }else if(enemy.type=="vampire"){
+          spawnedEnemies.emplace_back(std::make_unique<Vampire>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
         }
       }
     }
