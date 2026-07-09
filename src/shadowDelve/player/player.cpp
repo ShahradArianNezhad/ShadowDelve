@@ -68,18 +68,31 @@ void Player::setMode(MODE mode){
       break;
     case MODE::FALL:
       ScheduleManager::cancel_task(animationJob);
-      animationJob = ScheduleManager::do_every(0.01, [this](){
-          auto render = engine.componentManager.getComponent<Component::RENDER>(id);
-          if((render.color&0x000000FF) > 10)render.color-=10;
-          else render.color&=0xFFFFFF00;
-          engine.componentManager.setComponent(id, render);
-      });
+      animationJob = ScheduleManager::do_every(0.01, [this](){fallAnimationFunc();});
       return;
   }
 
   animationFrame=0;
   if(animationJob!=UINT32_MAX)ScheduleManager::cancel_task(animationJob);
   animationJob = ScheduleManager::do_every(data.secsPerFrame,[this, data](){animationFunction(data);});
+}
+
+void Player::fallAnimationFunc(){
+  auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+  if((render.color&0x000000FF) > 10)render.color-=10;
+  else {
+    render.color&=0xFFFFFF00;
+    engine.componentManager.setComponent(id, render);
+    ScheduleManager::cancel_task(animationJob);
+    animationJob=UINT32_MAX;
+    ScheduleManager::do_after(1, [this, render](){
+        auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+        render.color|=0x000000FF;
+        respawn();
+        engine.componentManager.setComponent(id, render);
+        });
+  }
+  engine.componentManager.setComponent(id, render);
 }
 
 
@@ -290,20 +303,13 @@ void Player::updateDash(double dt){
 }
 
 void Player::update(double dt){
-  if(mode==MODE::DEATH && animationFrame==3){
-    ScheduleManager::cancel_task(animationJob);
-    animationFrame=0;
-  }
+  if(mode==MODE::DEATH && animationFrame==3)deathHandler();
   if(mode==MODE::DEATH || mode==MODE::FALL)return;
   if(mode==MODE::DAMAGED && animationFrame==3)setMode(MODE::MOVE);
   if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
-  if(!dashing){
-    vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
-    auto [gridX,gridY] = tileMap.positionToGridCords(pos);
-    if(tileMap.isGridEmpty(gridX, gridY)){
+  if(!dashing && shouldFall()){
       setMode(MODE::FALL);
       return;
-    }
   }
   makePopUps();
   handleInput();
@@ -313,7 +319,27 @@ void Player::update(double dt){
 }
 
 
+bool Player::shouldFall(){
+  vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto [gridX,gridY] = tileMap.positionToGridCords(pos);
+  if(tileMap.isGridEmpty(gridX, gridY))return true;
+  return false;
+}
+
+void Player::deathHandler(){
+    ScheduleManager::cancel_task(animationJob);
+    animationJob=UINT32_MAX;
+    animationFrame=0;
+    ScheduleManager::do_after(1, [this](){
+        respawn();
+    });
+}
 
 
-
-
+void Player::respawn(){
+  setMode(MODE::IDLE);
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+  trans.position.x=0;
+  trans.position.y=0;
+  engine.componentManager.setComponent(id,trans);
+}

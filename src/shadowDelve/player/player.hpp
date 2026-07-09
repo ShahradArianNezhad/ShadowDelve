@@ -77,6 +77,10 @@ class Player {
   void heavyAttack();
   void handleMove(double dt);
   void updateDash(double dt);
+  void respawn();
+  void fallAnimationFunc();
+  bool shouldFall();
+  void deathHandler();
 
   public:
     static inline EntityId id;
