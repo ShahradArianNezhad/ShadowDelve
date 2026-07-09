@@ -90,7 +90,12 @@ void Vampire::setMode(MODE mode){
     case MODE::DEATH:
       engine.changeSprite(id,"./assets/vampire/vampire_death2.png",{0,0},{1.0f/14.0f,1});
       animationTask=ScheduleManager::do_every(0.15, [this](){
-          if(currFrame==14){locked=true;return;}
+          if(currFrame==14){
+            ScheduleManager::cancel_task(animationTask);
+            animationTask=UINT32_MAX;
+            locked=true;
+            return;
+          }
           engine.componentManager.setComponent(id, Component::UVRECT{{(currFrame)/14.0f,0},{(currFrame+1)/14.0f,1}});
           currFrame++;
       });
