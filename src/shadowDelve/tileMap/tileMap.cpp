@@ -562,8 +562,8 @@ void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){
       for(auto enemy:enemyMap[gridCoords.x][gridCoords.y]){
         if(enemy.type=="skeleton"){
           int num = random()%3;
-          if(num>=1)spawnedEnemies.emplace_back(std::make_unique<ScytheSkeleton>(vec2{gridCoords.x*BLOCKSIZE,gridCoords.y*BLOCKSIZE},engine));
-          else spawnedEnemies.emplace_back(std::make_unique<DaggerSkeleton>(vec2{gridCoords.x*BLOCKSIZE,gridCoords.y*BLOCKSIZE},engine));
+          if(num>=1)spawnedEnemies.emplace_back(std::make_unique<ScytheSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
+          else spawnedEnemies.emplace_back(std::make_unique<DaggerSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
         }
       }
     }
@@ -575,6 +575,10 @@ void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){
       revealTiles({gridCoords.x + dx, gridCoords.y + dy},visited);
     }
   }
+}
+
+vec2 TileMap::gridCordsToPosition(int gridX,int gridY){
+  return vec2{gridX*BLOCKSIZE - BLOCKSIZE/2.0,gridY*BLOCKSIZE - BLOCKSIZE/2.0};
 }
 
 void TileMap::revealFromDoor(DoorPair& pair,vec2 from){

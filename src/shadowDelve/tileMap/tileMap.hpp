@@ -84,6 +84,7 @@ class TileMap{
     static bool isCorner(vec2 uv);
     static bool isHorizontalTorch(vec2 uv);
     static bool isWall(vec2 uv);
+    static vec2 gridCordsToPosition(int gridX,int gridY);
     bool isWalkable(vec2 gridCords);
     bool hasWall(vec2 gridCords);
     DoorPair getDoorPair(EntityId door);
