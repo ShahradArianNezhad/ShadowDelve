@@ -1,5 +1,6 @@
 #pragma once
 #include "shadowDelve/enemies/enemy.hpp"
+#include "shadowDelve/player/player.hpp"
 
 
 
@@ -20,6 +21,7 @@ class Vampire : public EnemyEntity{
     void chasePlayer(double dt);
     void go(vec2 pos);
     void makeRandomMove();
+    void playerAttackedHandler(const PlayerAttackedEvent& e);
     void attack();
     void roamToGoal(double dt);
     double getDist(vec2 start,vec2 end);
@@ -30,9 +32,11 @@ class Vampire : public EnemyEntity{
     bool decending=false;
     TaskId animationTask=UINT32_MAX;
     static constexpr int attackRange = 200;
+    static constexpr int maxHealth = 100;
     static constexpr int aggroRange = 800;
     static constexpr int roamSpeed = 30;
     static constexpr int chaseSpeed = 100;
+    int health=maxHealth;
     void setMode(MODE mode);
     bool canSeePlayer();
     void update(double dt) override;

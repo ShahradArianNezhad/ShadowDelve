@@ -12,7 +12,7 @@
 
 DaggerSkeleton::DaggerSkeleton(vec2 pos,Engine& e):Skeleton(e){
   id = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER},"assets/skeleton/skeleton1_idle2.png",{0,0},{1.0f/6.0f,1});
-  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-3,1},{12,18}});
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{12,18}});
   if(showCollider)collider = engine.makeRect({pos.x,pos.y,9}, {12,10});
   setMode(MODE::IDLE);
   ScheduleManager::do_every(random()%6 + 3,[this](){

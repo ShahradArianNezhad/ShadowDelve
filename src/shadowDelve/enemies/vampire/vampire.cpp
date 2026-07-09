@@ -9,7 +9,26 @@
 
 Vampire::Vampire(vec2 pos,Engine& e):EnemyEntity(e){
   id = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER}, "./assets/vampire/vampire_idle2.png",{0,0},{1.0f/6.0f,1});
+  engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{12,18}});
+  EventManager::subscribe<PlayerAttackedEvent>([this](const PlayerAttackedEvent& e){playerAttackedHandler(e);});
   setMode(MODE::IDLE);
+};
+
+void Vampire::playerAttackedHandler(const PlayerAttackedEvent& e){
+  if(!engine.rectIsColliding(id, Player::id))return;
+  if(mode==MODE::DEATH)return;
+  auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
+  auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  vec2 dir = glm::normalize(vec2{playerPos.x-enemyPos.x,playerPos.y-enemyPos.y});
+  dir.x*=-5;
+  dir.y*=-5;
+  setMode(MODE::DAMAGED);
+  auto knockbackTask = ScheduleManager::do_every(0.01,[this, dir](){
+      applyVelocity(dir);
+      });
+  ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
+  health-=e.damage;
+  if(health<=0)setMode(MODE::DEATH);
 }
 
 
@@ -53,6 +72,26 @@ void Vampire::setMode(MODE mode){
       animationTask=ScheduleManager::do_every(0.15, [this](){
           if(currFrame==7)currFrame=0;
           engine.componentManager.setComponent(id, Component::UVRECT{{(currFrame)/8.0f,0},{(currFrame+1)/8.0f,1}});
+          currFrame++;
+      });
+      break;
+    case MODE::DAMAGED:
+      locked=true;
+      engine.changeSprite(id,"./assets/vampire/vampire_take_damage2.png",{0,0},{1.0f/5.0f,1});
+      animationTask=ScheduleManager::do_every(0.075, [this](){
+          if(currFrame==5){
+            setMode(MODE::IDLE);
+            locked=false;
+          }
+          engine.componentManager.setComponent(id, Component::UVRECT{{(currFrame)/5.0f,0},{(currFrame+1)/5.0f,1}});
+          currFrame++;
+      });
+      break;
+    case MODE::DEATH:
+      engine.changeSprite(id,"./assets/vampire/vampire_death2.png",{0,0},{1.0f/14.0f,1});
+      animationTask=ScheduleManager::do_every(0.15, [this](){
+          if(currFrame==14){locked=true;return;}
+          engine.componentManager.setComponent(id, Component::UVRECT{{(currFrame)/14.0f,0},{(currFrame+1)/14.0f,1}});
           currFrame++;
       });
       break;
