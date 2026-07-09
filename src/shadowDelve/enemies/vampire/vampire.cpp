@@ -76,7 +76,8 @@ void Vampire::update(double dt){
   vec2 player = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   vec2 vampire = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   if(canAttack && getDist(player,vampire)<=attackRange && canSeePlayer())attack();
-  else if(getDist(player,vampire)<=aggroRange)chasePlayer(dt);
+  else if(getDist(player,vampire)<=aggroRange && getDist(player,vampire)>=attackRange/2.0)chasePlayer(dt);
+  else setMode(MODE::IDLE);
 
 }
 

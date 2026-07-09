@@ -16,7 +16,7 @@ class Vampire : public EnemyEntity{
     };
     float attackCooldown = 5;
     bool canAttack = true;
-    void init(){};
+    void init()override{};
     void chasePlayer(double dt);
     void go(vec2 pos);
     void makeRandomMove();
