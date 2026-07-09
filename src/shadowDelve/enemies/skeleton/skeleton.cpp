@@ -11,24 +11,26 @@
 
 
 Skeleton::Skeleton(Engine& e):EnemyEntity(e){
-  EventManager::subscribe<PlayerAttackedEvent>([this](const PlayerAttackedEvent& e){
-      if(!engine.rectIsColliding(id, Player::id))return;
-      if(mode==MODE::DEATH)return;
-      auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
-      auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
-      vec2 dir = glm::normalize(vec2{playerPos.x-enemyPos.x,playerPos.y-enemyPos.y});
-      dir.x*=-5;
-      dir.y*=-5;
-      setMode(MODE::DAMAGED);
-      auto knockbackTask = ScheduleManager::do_every(0.01,[this, dir](){
-          applyVelocity(dir);
-          });
-      ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
-      health-=e.damage;
-      if(health<=0)setMode(MODE::DEATH);
-  });
-
+  EventManager::subscribe<PlayerAttackedEvent>([this](const PlayerAttackedEvent& e){playerAttackedHandler(e);});
 };
+
+void Skeleton::playerAttackedHandler(const PlayerAttackedEvent& e){
+  if(!engine.rectIsColliding(id, Player::id))return;
+  if(mode==MODE::DEATH)return;
+  auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
+  auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  vec2 dir = glm::normalize(vec2{playerPos.x-enemyPos.x,playerPos.y-enemyPos.y});
+  dir.x*=-5;
+  dir.y*=-5;
+  setMode(MODE::DAMAGED);
+  auto knockbackTask = ScheduleManager::do_every(0.01,[this, dir](){
+      applyVelocity(dir);
+      });
+  ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
+  health-=e.damage;
+  if(health<=0)setMode(MODE::DEATH);
+
+}
 
 
 

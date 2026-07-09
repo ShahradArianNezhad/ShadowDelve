@@ -337,6 +337,7 @@ void Player::deathHandler(){
 
 
 void Player::respawn(){
+  health=maxHealth;
   setMode(MODE::IDLE);
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   trans.position.x=0;

@@ -1,5 +1,6 @@
 #pragma once
 #include "shadowDelve/enemies/enemy.hpp"
+#include "shadowDelve/player/player.hpp"
 
 
 
@@ -33,6 +34,7 @@ class Skeleton : public EnemyEntity{
     static constexpr int chaseSpeed = 150;
     virtual void setMode(MODE mode)=0;
     virtual void update(double dt)=0;
+    void playerAttackedHandler(const PlayerAttackedEvent& e);
 
   public:
     Skeleton(Engine& e);
