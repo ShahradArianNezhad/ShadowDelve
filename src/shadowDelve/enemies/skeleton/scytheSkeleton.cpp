@@ -77,7 +77,13 @@ void ScytheSkeleton::setMode(MODE mode){
     case MODE::FALL:
       animationTask = ScheduleManager::do_every(0.01,[this](){
           auto render = engine.componentManager.getComponent<Component::RENDER>(id);
-          if((render.color&0x000000FF)!=0)render.color-=5;
+          if((render.color&0x000000FF) > 10)render.color-=10;
+          else {
+          render.color&=0xFFFFFF00;
+          engine.componentManager.setComponent(id, render);
+          ScheduleManager::cancel_task(animationTask);
+          animationTask=UINT32_MAX;
+          }
           engine.componentManager.setComponent(id, render);
       });
       break;

@@ -100,6 +100,19 @@ void Vampire::setMode(MODE mode){
           currFrame++;
       });
       break;
+    case MODE::FALL:
+      animationTask = ScheduleManager::do_every(0.01, [this](){
+          auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+          if((render.color&0x000000FF) > 10)render.color-=10;
+          else {
+          render.color&=0xFFFFFF00;
+          engine.componentManager.setComponent(id, render);
+          ScheduleManager::cancel_task(animationTask);
+          animationTask=UINT32_MAX;
+          }
+          engine.componentManager.setComponent(id, render);
+      });
+      break;
   }
   if(old_trans.scale.x<0){
     auto new_trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
@@ -116,9 +129,11 @@ double Vampire::getDist(vec2 start,vec2 end){
 
 
 void Vampire::update(double dt){
+  vec2 vampire = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto [gridX,gridY] = TileMap::positionToGridCords(vampire);
+  if(TileMap::isGridEmpty(gridX, gridY)){setMode(MODE::FALL);return;}
   if(locked)return;
   vec2 player = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
-  vec2 vampire = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   if(canAttack && getDist(player,vampire)<=attackRange && canSeePlayer())attack();
   else if(getDist(player,vampire)<=aggroRange && getDist(player,vampire)>=attackRange/2.0)chasePlayer(dt);
   else setMode(MODE::IDLE);
