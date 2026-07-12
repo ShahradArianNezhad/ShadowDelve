@@ -100,15 +100,17 @@ void DaggerSkeleton::setMode(MODE mode){
 
 
 void DaggerSkeleton::update(double dt){
-  vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
-  auto d = getDist(pos, playerPos);
+  auto d = getDist(vec2{trans.position}, playerPos);
+  auto [gridX,gridY] = TileMap::positionToGridCords(vec2{trans.position.x,trans.position.y-(trans.scale.y/2.0)});
+  if(TileMap::isGridEmpty(gridX, gridY))setMode(MODE::FALL);
   if(d<300 && (mode==MODE::WALK || mode==MODE::IDLE))setMode(MODE::CHASE);
   switch(mode){
     case MODE::IDLE:break;
     case MODE::WALK:
       roamToGoal(dt);
-      if(pos==goal)setMode(MODE::IDLE);
+      if(vec2{trans.position}==goal)setMode(MODE::IDLE);
       break;
     case MODE::CHASE:
       chasePlayer(dt);
