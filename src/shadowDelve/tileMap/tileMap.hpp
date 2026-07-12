@@ -35,6 +35,7 @@ class TileMap{
     std::map<std::string, int> roomCount;
     std::vector<DoorPair> unusedDoors;
     static constexpr std::string_view roomsPath = "./assets/map/rooms";
+    static constexpr int maxGeneratedRooms = 10;
 
 
     nlohmann::json parseJson(const std::string& path);

@@ -29,7 +29,7 @@ void TileMap::update(double dt){
 
 void TileMap::generateMap(){
   makeRoom("./assets/map/spawn.json");
-  for(int i=0;i<10;i++){
+  for(int i=0;i<maxGeneratedRooms;i++){
     auto index =random()%unusedDoors.size();
     if(connectToUnusedDoor(unusedDoors[index]))unusedDoors.erase(unusedDoors.begin()+index);
   }
