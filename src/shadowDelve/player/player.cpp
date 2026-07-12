@@ -10,7 +10,7 @@
 
 
 void Player::init(){
-  id = engine.makeSprite({0,0,ENTITY_LAYER}, "./assets/Soldier/Soldier2.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
+  id = engine.makeSprite({0,0,PLAYER_LAYER}, "./assets/Soldier/Soldier2.png",{0,0},{1.0/uvSegmentsX,1.0/uvSegmentsY});
   engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,-3},colliderScale,0});
   if(showCollider){
     auto comp = engine.componentManager.getComponent<Component::TRANSFORM>(id);
@@ -186,7 +186,7 @@ void Player::dash(){
     auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
     for(int i=0;i<trailCount;i++){
       auto& trail = trails[i];
-      trail = engine.makeSprite({pos.x,pos.y,ENTITY_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
+      trail = engine.makeSprite({pos.x,pos.y,PLAYER_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
       auto render = engine.componentManager.getComponent<Component::RENDER>(trail); 
       uint32_t color = 34 + i*70;
       color |= 0xFFFFFF00;

@@ -287,7 +287,7 @@ std::vector<Tile> TileMap::getNearbyTiles(vec2 position,int radius){
 
 
 bool TileMap::isFloor(vec2 uv){
-  return (uv.x>=6.0/10 && uv.y<=2.0f/10) || (uv.x<=3.0f/10 && uv.y>=6.0f/10 && uv.y<=7.0f/10) || (uv.x>=1.0f/10 && uv.x<=4.0f/10 && uv.y>=1.0f/10 && uv.y<=3.0f/10)||(uv.x==9.0f/10 && uv.y==7.0f/10);
+  return (uv.x>=6.0/10 && uv.y<=2.0f/10) || (uv.x<=3.0f/10 && uv.y>=6.0f/10 && uv.y<=7.0f/10) || (uv.x>=1.0f/10 && uv.x<=4.0f/10 && uv.y>=1.0f/10 && uv.y<=3.0f/10)||(uv.x==9.0f/10 && uv.y==7.0f/10) || (uv.x==9.0f/10.0f && uv.y==6.0f/10.0f);
 }
 
 bool TileMap::isCorner(vec2 uv){
@@ -723,8 +723,8 @@ void TileMap::updateBackWallZ(){
             auto lastTileUv = engine.componentManager.getComponent<Component::UVRECT>(lastTile);
             auto lastTileTrans = engine.componentManager.getComponent<Component::TRANSFORM>(lastTile);
             if(trans.position.y < wallTrans.position.y){
-              wallTrans.position.z=ENTITY_LAYER+1;
-              if(isHorizontalTorch(lastTileUv.uvMin))lastTileTrans.position.z=ENTITY_LAYER+2;
+              wallTrans.position.z=PLAYER_LAYER+1;
+              if(isHorizontalTorch(lastTileUv.uvMin))lastTileTrans.position.z=PLAYER_LAYER+2;
             }else{
               wallTrans.position.z=WALL_LAYER;
               if(isHorizontalTorch(lastTileUv.uvMin))lastTileTrans.position.z=WALL_LAYER+1;
