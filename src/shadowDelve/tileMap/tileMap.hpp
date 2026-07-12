@@ -40,7 +40,7 @@ class TileMap{
 
     nlohmann::json parseJson(const std::string& path);
     void makeRoom(const std::string& path,int dx=0,int dy=0,bool hidden=false);
-    bool connectToUnusedDoor(DoorPair& pair,size_t attempts=0);
+    bool connectRoomToUnusedDoor(DoorPair& pair,size_t attempts=0);
     bool roomCanBePlaced(nlohmann::json& data,int dx,int dy);
     bool roomCollidesWithMap(nlohmann::json& data,int dx,int dy);
     vec2 parseUvFromJson(std::string& uvText);

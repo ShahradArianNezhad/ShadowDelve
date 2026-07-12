@@ -31,7 +31,7 @@ void TileMap::generateMap(){
   makeRoom("./assets/map/spawn.json");
   for(int i=0;i<maxGeneratedRooms;i++){
     auto index =random()%unusedDoors.size();
-    if(connectToUnusedDoor(unusedDoors[index]))unusedDoors.erase(unusedDoors.begin()+index);
+    if(connectRoomToUnusedDoor(unusedDoors[index]))unusedDoors.erase(unusedDoors.begin()+index);
   }
   sealUnusedDoors();
 
@@ -199,14 +199,14 @@ bool TileMap::roomCollidesWithMap(nlohmann::json& data,int dx,int dy){
 }
 
 
-bool TileMap::connectToUnusedDoor(DoorPair& pair,size_t attempts){
+bool TileMap::connectRoomToUnusedDoor(DoorPair& pair,size_t attempts){
   if(attempts>20)return false;
   auto room = selectRandomRoom();
   auto data = parseJson(room.string());
   auto [dx,dy] = findMatchingDoorDiff(data, pair);
   if(dx==INT32_MAX || dy==INT32_MAX)return false;
-  if(dx==0 && dy==0)return connectToUnusedDoor(pair,attempts+1);
-  if(roomCollidesWithMap(data, dx, dy))return connectToUnusedDoor(pair,attempts+1);
+  if(dx==0 && dy==0)return connectRoomToUnusedDoor(pair,attempts+1);
+  if(roomCollidesWithMap(data, dx, dy))return connectRoomToUnusedDoor(pair,attempts+1);
   makeRoom(room.string(),dx,dy,true);
   std::string roomName = room.string().substr(room.string().find_last_of('/')+1);
   roomName.erase(roomName.find('.'));
