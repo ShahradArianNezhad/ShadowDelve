@@ -23,6 +23,7 @@ void TileMap::init(){
 void TileMap::update(double dt){
   for(auto& e:spawnedEnemies)e->update(dt);
   updateBackWallZ();
+
 }
 
 void TileMap::generateMap(){
@@ -524,27 +525,49 @@ DoorPair TileMap::getDoorPair(EntityId door){
   auto uv1 = engine.componentManager.getComponent<Component::UVRECT>(door);
   if(!isDoor(uv1.uvMin))LOG_WARN("get door pair called when argument is not a door");
   auto [gridX,gridY] = positionToGridCords(trans.position);
+  EntityId door2=UINT32_MAX;
 
   if(isHorizontalDoor(uv1.uvMin)){
     for(auto tile:tileMap[gridX+1][gridY]){
       auto uv2 = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
-      if(isDoor(uv2.uvMin))return DoorPair{door,tile.id};
+      if(isDoor(uv2.uvMin))door2=tile.id;
     };
     for(auto tile:tileMap[gridX-1][gridY]){
       auto uv2 = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
-      if(isDoor(uv2.uvMin))return DoorPair{door,tile.id};
+      if(isDoor(uv2.uvMin))door2=tile.id;
     };
   }else if(isVerticalDoor(uv1.uvMin)){
     for(auto tile:tileMap[gridX][gridY+1]){
       auto uv2 = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
-      if(isDoor(uv2.uvMin))return DoorPair{door,tile.id};
+      if(isDoor(uv2.uvMin))door2=tile.id;
     };
     for(auto tile:tileMap[gridX][gridY-1]){
       auto uv2 = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
-      if(isDoor(uv2.uvMin))return DoorPair{door,tile.id};
+      if(isDoor(uv2.uvMin))door2=tile.id;
     };
   }
-  return DoorPair{door,UINT32_MAX};
+  if(door2!=UINT32_MAX && isLocked({door,door2}))return DoorPair{door,door2,true};
+  return DoorPair{door,door2,false};
+}
+
+bool TileMap::isLocked(DoorPair pair){
+  auto firstTrans = engine.componentManager.getComponent<Component::TRANSFORM>(pair.first);
+  auto [firstGridX,firstGridY] = positionToGridCords(firstTrans.position);
+  auto secondTrans = engine.componentManager.getComponent<Component::TRANSFORM>(pair.second);
+  auto [secondGridX,secondGridY] = positionToGridCords(secondTrans.position);
+  for(auto& tile:tileMap[firstGridX][firstGridY]){
+    auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
+    if(isLock(uv.uvMin))return true;
+  }
+  for(auto& tile:tileMap[secondGridX][secondGridY]){
+    auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
+    if(isLock(uv.uvMin))return true;
+  }
+  return false;
+}
+
+bool TileMap::isLock(vec2 uv){
+  return uv.y==7.0f/10.0f && uv.x== 6.0f/10.0f;
 }
 
 void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){

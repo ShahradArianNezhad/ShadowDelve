@@ -14,6 +14,7 @@ enum class TileType{
 struct DoorPair{
   EntityId first=UINT32_MAX;
   EntityId second=UINT32_MAX;
+  bool locked=false;
 };
 
 
@@ -55,6 +56,7 @@ class TileMap{
     void deleteEntity(EntityId id);
     void deleteFromTilemap(EntityId id);
     void sealUnusedDoors();
+    bool isLocked(DoorPair pair);
     void updateBackWallZ();
     std::pair<int,int> findMatchingDoorDiff(nlohmann::json& data,DoorPair& pair);
 
@@ -82,6 +84,7 @@ class TileMap{
     static bool isBottomDoor(vec2 uv);
     static bool isFloor(vec2 uv);
     static bool isCorner(vec2 uv);
+    static bool isLock(vec2 uv);
     static bool isHorizontalTorch(vec2 uv);
     static bool isWall(vec2 uv);
     static vec2 gridCordsToPosition(int gridX,int gridY);

@@ -171,6 +171,7 @@ void Player::handleInteract(){
     auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
     if(TileMap::isDoor(uv.uvMin)){
       auto pair = tileMap.getDoorPair(tile.id);
+      if(pair.locked)return;
       if(pair.second!=UINT32_MAX)tileMap.toggleDoor(pair,trans.position);
       if(popUps.contains("door"))popUps.erase("door");
       break;
