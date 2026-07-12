@@ -2,6 +2,7 @@
 #include "engine/engine.hpp"
 #include "json.hpp"
 #include "shadowDelve/enemies/enemy.hpp"
+#include <map>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -31,6 +32,7 @@ class TileMap{
   private:
     EntityId player=UINT32_MAX;
     Engine& engine;
+    std::map<std::string, int> roomCount;
     std::vector<DoorPair> unusedDoors;
     static constexpr std::string_view roomsPath = "./assets/map/rooms";
 

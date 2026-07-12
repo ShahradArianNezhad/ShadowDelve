@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <string_view>
 
 
 void TileMap::init(){
@@ -207,6 +208,9 @@ bool TileMap::connectToUnusedDoor(DoorPair& pair,size_t attempts){
   if(dx==0 && dy==0)return connectToUnusedDoor(pair,attempts+1);
   if(roomCollidesWithMap(data, dx, dy))return connectToUnusedDoor(pair,attempts+1);
   makeRoom(room.string(),dx,dy,true);
+  std::string roomName = room.string().substr(room.string().find_last_of('/')+1);
+  roomName.erase(roomName.find('.'));
+  roomCount[roomName]+=1;
   return true;
 }
 
