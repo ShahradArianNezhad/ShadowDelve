@@ -22,7 +22,6 @@ void TileMap::init(){
 
 void TileMap::update(double dt){
   for(auto& e:spawnedEnemies)e->update(dt);
-
   updateBackWallZ();
 }
 
@@ -287,7 +286,7 @@ std::vector<Tile> TileMap::getNearbyTiles(vec2 position,int radius){
 
 
 bool TileMap::isFloor(vec2 uv){
-  return (uv.x>=6.0/10 && uv.y<=2.0f/10) || (uv.x<=3.0f/10 && uv.y>=6.0f/10 && uv.y<=7.0f/10) || (uv.x>=1.0f/10 && uv.x<=4.0f/10 && uv.y>=1.0f/10 && uv.y<=3.0f/10)||(uv.x==9.0f/10 && uv.y==7.0f/10) || (uv.x==9.0f/10.0f && uv.y==6.0f/10.0f);
+  return (uv.x>=6.0/10 && uv.y<=2.0f/10) || (uv.x<=3.0f/10 && uv.y>=6.0f/10 && uv.y<=7.0f/10) || (uv.x>=1.0f/10 && uv.x<=4.0f/10 && uv.y>=1.0f/10 && uv.y<=3.0f/10)||(uv.x==9.0f/10 && uv.y==7.0f/10) || (uv.x==8.0f/10.0f && uv.y==7.0f/10.0f);
 }
 
 bool TileMap::isCorner(vec2 uv){
@@ -421,7 +420,12 @@ void TileMap::drawTilesFromJson(nlohmann::json& data,int dx,int dy,bool hidden){
         if(isFloor(uv))position.z=FLOOR_LAYER;
         else if(isWall(uv)){
           wallPlaced=true;
-          position.z=WALL_LAYER;
+          if(!isBackWall(uv))position.z=WALL_LAYER;
+          else{
+            if(data["tile"][tileX].contains(std::to_string(std::stoi(tileY)+1)))position.z=WALL_LAYER;
+            else position.z=PLAYER_LAYER+1;
+
+          }
         }
         else if(isDoor(uv))position.z=DOOR_LAYER;
         else if(isHorizontalTorch(uv)&&!wallPlaced)position.z=0;
