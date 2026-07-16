@@ -151,7 +151,6 @@ void Vampire::update(double dt){
   if(canAttack && getDist(player,vampire)<=attackRange && canSeePlayer())attack();
   else if(getDist(player,vampire)<=aggroRange && getDist(player,vampire)>=attackRange/2.0)chasePlayer(dt);
   else setMode(MODE::IDLE);
-
 }
 
 bool Vampire::canSeePlayer(){
@@ -175,7 +174,7 @@ void Vampire::attack(){
   setMode(MODE::ATTACK);
   canAttack=false;
   locked=true;
-  ScheduleManager::do_every(attackCooldown, [this](){canAttack=true;});
+  ScheduleManager::do_after(attackCooldown, [this](){canAttack=true;});
   vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   fireballs.emplace_back(std::make_unique<FireBall>(engine,pos,playerPos-pos));

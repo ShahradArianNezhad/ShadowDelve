@@ -33,7 +33,7 @@ class Vampire : public EnemyEntity{
     bool locked=false;
     bool decending=false;
     TaskId animationTask=UINT32_MAX;
-    static constexpr int attackRange = 200;
+    static constexpr int attackRange = 400;
     static constexpr int maxHealth = 100;
     static constexpr int aggroRange = 800;
     static constexpr int roamSpeed = 30;
