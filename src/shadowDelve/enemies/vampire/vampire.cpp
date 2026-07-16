@@ -180,9 +180,14 @@ void Vampire::attack(){
   canAttack=false;
   locked=true;
   ScheduleManager::do_after(attackCooldown, [this](){canAttack=true;});
-  vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
-  fireballs.emplace_back(std::make_unique<FireBall>(engine,pos,playerPos-pos));
+  vec2 dir = playerPos-vec2{trans.position};
+  if(dir.x*trans.scale.x<0){
+    trans.scale.x*=-1;
+    engine.componentManager.setComponent(id, trans);
+  }
+  fireballs.emplace_back(std::make_unique<FireBall>(engine,trans.position,dir));
 }
 
 
