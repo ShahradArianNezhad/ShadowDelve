@@ -1,6 +1,8 @@
 #pragma once
 #include "shadowDelve/enemies/enemy.hpp"
+#include "shadowDelve/enemies/vampire/fireball/fireball.hpp"
 #include "shadowDelve/player/player.hpp"
+#include <memory>
 
 
 
@@ -40,6 +42,8 @@ class Vampire : public EnemyEntity{
     void setMode(MODE mode);
     bool canSeePlayer();
     void update(double dt) override;
+    std::vector<std::unique_ptr<FireBall>> fireballs;
+    void updateFireballs(double dt);
 
   public:
     Vampire(vec2 pos,Engine& e);

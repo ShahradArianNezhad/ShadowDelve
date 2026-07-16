@@ -1,10 +1,13 @@
 #include "./vampire.hpp"
+#include "engine/entityManager/component/components.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
+#include "shadowDelve/enemies/vampire/fireball/fireball.hpp"
 #include "shadowDelve/player/player.hpp"
 #include "shadowDelve/tileMap/tileMap.hpp"
 #include "utilities/consts.hpp"
 #include <cmath>
 #include <glm/ext/quaternion_geometric.hpp>
+#include <memory>
 
 
 Vampire::Vampire(vec2 pos,Engine& e):EnemyEntity(e){
@@ -127,10 +130,21 @@ double Vampire::getDist(vec2 start,vec2 end){
   return sqrt((deltaX*deltaX) + (deltaY*deltaY));
 }
 
+void Vampire::updateFireballs(double dt){
+  for(size_t i{0};i<fireballs.size();i++){
+    auto& fireball = fireballs[i];
+    if(fireball->destroyed){fireballs.erase(fireballs.begin()+i);i--;}
+  }
+  for(size_t i{0};i<fireballs.size();i++){
+    auto& fireball = fireballs[i];
+    fireball->update(dt);
+  }
+}
 
 void Vampire::update(double dt){
   vec2 vampire = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   auto [gridX,gridY] = TileMap::positionToGridCords(vampire);
+  updateFireballs(dt);
   if(TileMap::isGridEmpty(gridX, gridY)){setMode(MODE::FALL);return;}
   if(locked)return;
   vec2 player = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
@@ -162,6 +176,9 @@ void Vampire::attack(){
   canAttack=false;
   locked=true;
   ScheduleManager::do_every(attackCooldown, [this](){canAttack=true;});
+  vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
+  fireballs.emplace_back(std::make_unique<FireBall>(engine,pos,playerPos-pos));
 }
 
 
