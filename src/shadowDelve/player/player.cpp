@@ -68,7 +68,7 @@ void Player::setMode(MODE mode){
       break;
     case MODE::FALL:
       ScheduleManager::cancel_task(animationJob);
-      animationJob = ScheduleManager::do_every(0.01, [this](){fallAnimationFunc();});
+      animationJob = ScheduleManager::do_every(0.02, [this](){fallAnimationFunc();});
       return;
   }
 
@@ -79,20 +79,32 @@ void Player::setMode(MODE mode){
 
 void Player::fallAnimationFunc(){
   auto render = engine.componentManager.getComponent<Component::RENDER>(id);
-  if((render.color&0x000000FF) > 10)render.color-=10;
-  else {
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+  if((render.color&0x000000FF) > 10){
+    render.color-=10;
+    trans.scale.x-=trans.scale.x/20;
+    trans.scale.y-=trans.scale.y/20;
+  }else {
     render.color&=0xFFFFFF00;
     engine.componentManager.setComponent(id, render);
     ScheduleManager::cancel_task(animationJob);
     animationJob=UINT32_MAX;
     ScheduleManager::do_after(1, [this, render](){
         auto render = engine.componentManager.getComponent<Component::RENDER>(id);
+        auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+
+        // initial scale values
+        trans.scale.x=100;
+        trans.scale.y=100;
+
         render.color|=0x000000FF;
-        respawn();
         engine.componentManager.setComponent(id, render);
+        engine.componentManager.setComponent(id, trans);
+        respawn();
         });
   }
   engine.componentManager.setComponent(id, render);
+  engine.componentManager.setComponent(id, trans);
 }
 
 

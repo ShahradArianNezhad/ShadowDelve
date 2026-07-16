@@ -78,16 +78,21 @@ void DaggerSkeleton::setMode(MODE mode){
       });
       break;
     case MODE::FALL:
-      animationTask=ScheduleManager::do_every(0.01,[this](){
+      animationTask=ScheduleManager::do_every(0.02,[this](){
           auto render = engine.componentManager.getComponent<Component::RENDER>(id);
-          if((render.color&0x000000FF) > 10)render.color-=10;
-          else {
-          render.color&=0xFFFFFF00;
-          engine.componentManager.setComponent(id, render);
-          ScheduleManager::cancel_task(animationTask);
-          animationTask=UINT32_MAX;
+          auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+          if((render.color&0x000000FF) > 10){
+            render.color-=10;
+            trans.scale.x-=trans.scale.x/20;
+            trans.scale.y-=trans.scale.x/20;
+          }else {
+            render.color&=0xFFFFFF00;
+            engine.componentManager.setComponent(id, render);
+            ScheduleManager::cancel_task(animationTask);
+            animationTask=UINT32_MAX;
           }
           engine.componentManager.setComponent(id, render);
+          engine.componentManager.setComponent(id, trans);
       });
   }
   if(old_trans.scale.x<0){
