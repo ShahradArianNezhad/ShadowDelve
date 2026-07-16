@@ -1,4 +1,5 @@
 #include "shadowDelve.hpp"
+#include "utilities/consts.hpp"
 
 void ShadowDelve::init(){
   Logger::setLogLevel(LogLevel::Info);
@@ -6,7 +7,7 @@ void ShadowDelve::init(){
   engine.setAmbient(0.3);
   engine.setTargetFPS(60);
   auto cam = engine.componentManager.getComponent<Component::CAMERA2D>(engine.getActiveCamera());
-  cam.zoom=1.5f;
+  cam.zoom=CAMERA_ZOOM;
   engine.componentManager.setComponent(engine.getActiveCamera(), cam);
   tileMap.init();
   player.init();

@@ -1,6 +1,7 @@
 #pragma once
 
 static constexpr int BLOCKSIZE = 32;
+static constexpr float CAMERA_ZOOM = 1.5f;
 static constexpr bool showCollider=false;
 
 static constexpr int FLOOR_LAYER = 1;
