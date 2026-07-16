@@ -14,6 +14,8 @@ class FireBall{
   int currFrame=0;
   TaskId animationTask=UINT32_MAX;
   void startAnimation();
+  void updatePositionFromVelocity(double dt);
+  void checkCollisions();
 
 
   public:

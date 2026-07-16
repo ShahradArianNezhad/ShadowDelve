@@ -1,5 +1,6 @@
 #include "fireball.hpp"
 #include "engine/entityManager/component/components.hpp"
+#include "engine/eventManager/eventManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
 #include "shadowDelve/player/player.hpp"
 #include "utilities/consts.hpp"
@@ -49,25 +50,33 @@ FireBall& FireBall::operator=(FireBall&& other) noexcept{
     return *this;
 }
 
-
-
-void FireBall::update(double dt){
+void FireBall::updatePositionFromVelocity(double dt){
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   auto lightTrans = engine.componentManager.getComponent<Component::TRANSFORM>(light);
   trans.position+=vec3{velocity*(float)dt,0};
   lightTrans.position+=vec3{velocity*(float)dt,0};
   engine.componentManager.setComponent(id, trans);
   engine.componentManager.setComponent(light, lightTrans);
+}
 
-
-
-  if(engine.rectCircleIsColliding(Player::id, id))destroyed=true;
+void FireBall::checkCollisions(){
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+  if(engine.rectCircleIsColliding(Player::id, id)){
+    EventManager::emit(PlayerDamagedEvent{id,20});
+    destroyed=true;
+  }
   else{
     for(auto& tile:TileMap::getNearbyTiles(trans.position)){
       auto uv = engine.componentManager.getComponent<Component::UVRECT>(tile.id);
       if(TileMap::isWall(uv.uvMin)&&engine.isColliding(tile.id, id))destroyed=true;
     }
   }
+}
+
+
+void FireBall::update(double dt){
+  updatePositionFromVelocity(dt);
+  checkCollisions();
 }
 
 
