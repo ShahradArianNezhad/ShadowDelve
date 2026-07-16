@@ -18,8 +18,8 @@ Vampire::Vampire(vec2 pos,Engine& e):EnemyEntity(e){
 };
 
 void Vampire::playerAttackedHandler(const PlayerAttackedEvent& e){
+  if(mode==MODE::DEATH || mode==MODE::DAMAGED)return;
   if(!engine.rectIsColliding(id, Player::id))return;
-  if(mode==MODE::DEATH)return;
   auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   vec2 dir = glm::normalize(vec2{playerPos.x-enemyPos.x,playerPos.y-enemyPos.y});
@@ -183,10 +183,12 @@ void Vampire::attack(){
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   vec2 dir = playerPos-vec2{trans.position};
+
   if(dir.x*trans.scale.x<0){
     trans.scale.x*=-1;
     engine.componentManager.setComponent(id, trans);
   }
+
   fireballs.emplace_back(std::make_unique<FireBall>(engine,trans.position,dir));
 }
 

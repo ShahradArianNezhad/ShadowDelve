@@ -15,8 +15,8 @@ Skeleton::Skeleton(Engine& e):EnemyEntity(e){
 };
 
 void Skeleton::playerAttackedHandler(const PlayerAttackedEvent& e){
+  if(mode==MODE::DEATH || mode==MODE::DAMAGED)return;
   if(!engine.rectIsColliding(id, Player::id))return;
-  if(mode==MODE::DEATH)return;
   auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
   vec2 dir = glm::normalize(vec2{playerPos.x-enemyPos.x,playerPos.y-enemyPos.y});
