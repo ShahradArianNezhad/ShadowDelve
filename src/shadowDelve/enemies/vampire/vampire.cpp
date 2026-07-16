@@ -15,6 +15,9 @@ Vampire::Vampire(vec2 pos,Engine& e):EnemyEntity(e){
   engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{12,18}});
   EventManager::subscribe<PlayerAttackedEvent>([this](const PlayerAttackedEvent& e){playerAttackedHandler(e);});
   setMode(MODE::IDLE);
+  ScheduleManager::do_every(random()%6 + 3,[this](){
+      if(mode==MODE::IDLE)makeRandomMove();
+  });
 };
 
 void Vampire::playerAttackedHandler(const PlayerAttackedEvent& e){
@@ -36,7 +39,27 @@ void Vampire::playerAttackedHandler(const PlayerAttackedEvent& e){
 
 
 
+void Vampire::roamToGoal(double dt){
+  vec2 pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto v = velocity;
+  v.x*=dt*roamSpeed;
+  v.y*=dt*roamSpeed;
+  if(getDist(pos,goal)>glm::length(v))applyVelocity(v);
+  else{
+    auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+    trans.position.x=goal.x;
+    trans.position.y=goal.y;
+    engine.componentManager.setComponent(id, trans);
+    velocity={0,0};
+  };
+}
 
+
+void Vampire::makeRandomMove(){
+  setMode(MODE::WALK);
+  auto dest = getRandomMove();
+  go(dest);
+}
 
 void Vampire::setMode(MODE mode){
   if(this->mode==mode)return;
@@ -70,6 +93,7 @@ void Vampire::setMode(MODE mode){
           else currFrame--;
       });
       break;
+    case MODE::WALK:
     case MODE::CHASE:
       engine.changeSprite(id,"./assets/vampire/vampire_movement2.png",{0,0},{1.0f/8.0f,1});
       animationTask=ScheduleManager::do_every(0.15, [this](){
@@ -147,11 +171,16 @@ void Vampire::updateFireballs(double dt){
 }
 
 void Vampire::update(double dt){
-  vec2 vampire = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
+  auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
+  vec2 vampire = trans.position;
   auto [gridX,gridY] = TileMap::positionToGridCords(vampire);
   updateFireballs(dt);
   if(TileMap::isGridEmpty(gridX, gridY)){setMode(MODE::FALL);return;}
   if(locked)return;
+  if(mode==MODE::WALK){
+    roamToGoal(dt);
+    if(vec2{trans.position}==goal)setMode(MODE::IDLE);
+  }
   vec2 player = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;
   if(canAttack && getDist(player,vampire)<=attackRange && canSeePlayer())attack();
   else if(getDist(player,vampire)<=aggroRange && getDist(player,vampire)>=attackRange/2.0)chasePlayer(dt);

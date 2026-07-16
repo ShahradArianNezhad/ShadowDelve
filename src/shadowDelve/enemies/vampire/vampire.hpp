@@ -34,8 +34,8 @@ class Vampire : public EnemyEntity{
     bool decending=false;
     TaskId animationTask=UINT32_MAX;
     static constexpr int attackRange = 400;
-    static constexpr int maxHealth = 100;
-    static constexpr int aggroRange = 800;
+    static constexpr int maxHealth = 60;
+    static constexpr int aggroRange = 600;
     static constexpr int roamSpeed = 30;
     static constexpr int chaseSpeed = 100;
     int health=maxHealth;
