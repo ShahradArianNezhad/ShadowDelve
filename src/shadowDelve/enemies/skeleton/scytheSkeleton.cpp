@@ -126,7 +126,7 @@ void ScytheSkeleton::update(double dt){
         engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-3,1},{12,18}});
       }
       if(engine.rectIsColliding(Player::id, id)&&!locked&&currFrame>=5){
-        EventManager::emit(PlayerDamagedEvent{id,10});
+        EventManager::emit(PlayerDamagedEvent{id,attackDamage});
         locked=true;
       }
       break;

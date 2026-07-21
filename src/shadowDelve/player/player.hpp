@@ -16,6 +16,11 @@ struct PlayerAttackedEvent{
   int damage;
 };
 
+struct PlayerHealthChangedEvent{
+  int newHealth;
+};
+
+
 class Player {
 
   enum class MODE{
@@ -28,10 +33,12 @@ class Player {
     FALL
   };
 
-  static constexpr float uvSegmentsX=9.0f;
-  static constexpr float uvSegmentsY=7.0f;
+  public:
   static constexpr int maxSpeed=200;
   static constexpr int maxHealth=100;
+  private:
+  static constexpr float uvSegmentsX=9.0f;
+  static constexpr float uvSegmentsY=7.0f;
   static constexpr AnimationData idleAnimationData{0,5,0.18f};
   static constexpr AnimationData moveAnimationData{1,7,0.1f};
   static constexpr AnimationData basicMelleAttackAnimationData{2,5,0.05f};
@@ -40,7 +47,7 @@ class Player {
   static constexpr AnimationData DeathAnimationData{6,4,0.2f};
 
 
-  int health=maxHealth;
+  static inline int health=maxHealth;
   TaskId animationJob=UINT32_MAX;
   int animationFrame=0;
   Engine& engine;
@@ -58,6 +65,7 @@ class Player {
   static constexpr size_t trailCount=3;
   EntityId trails[trailCount];
   EntityId collider;
+  void setHealth(int health);
 
   bool needDoorPopUp=true;
   std::unordered_map<std::string,KeyPopUp> popUps;
@@ -85,6 +93,7 @@ class Player {
 
   public:
     static inline EntityId id;
+    static inline int getHealth(){return health;}
     Player(Engine& e,TileMap& t):engine(e),tileMap(t){};
     void init();
     void setMode(MODE mode);

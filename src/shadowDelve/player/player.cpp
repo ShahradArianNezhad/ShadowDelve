@@ -28,7 +28,7 @@ void Player::init(){
           applyVelocity(dir);
       });
       ScheduleManager::do_after(0.1, [this, knockbackTask](){ScheduleManager::cancel_task(knockbackTask);});
-      health-=e.damage;
+      setHealth(health-e.damage);
       if(health<=0)setMode(MODE::DEATH);
       else setMode(MODE::DAMAGED);
   });
@@ -348,9 +348,13 @@ void Player::deathHandler(){
     });
 }
 
+void Player::setHealth(int h){
+  health=h;
+  EventManager::emit(PlayerHealthChangedEvent{h});
+}
 
 void Player::respawn(){
-  health=maxHealth;
+  setHealth(maxHealth);
   setMode(MODE::IDLE);
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   trans.position.x=0;

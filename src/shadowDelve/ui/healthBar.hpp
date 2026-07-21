@@ -11,6 +11,7 @@ class HealthBar{
     Engine& engine;
     int currState=0;
     void putAtTopLeft();
+    void update(int damage);
 
   public:
     HealthBar(Engine& e);

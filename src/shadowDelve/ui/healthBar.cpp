@@ -2,6 +2,7 @@
 #include "engine/entityManager/component/components.hpp"
 #include "engine/eventManager/eventManager.hpp"
 #include "platform/window/GLFWwindow.hpp"
+#include "shadowDelve/player/player.hpp"
 #include "utilities/consts.hpp"
 
 HealthBar::HealthBar(Engine& e):engine(e){
@@ -9,8 +10,15 @@ HealthBar::HealthBar(Engine& e):engine(e){
   bar = engine.makeSprite({0,0,0}, "./assets/ui.png",{1.0f/maxSegmentsX,0.0f/maxSegmentsY},{2.0f/maxSegmentsX,1.0f/maxSegmentsY},Layer::UI);
   putAtTopLeft();
 
-
   EventManager::subscribe<WindowSizeChangeEvent>([this](const WindowSizeChangeEvent&){putAtTopLeft();});
+  EventManager::subscribe<PlayerHealthChangedEvent>([this](const PlayerHealthChangedEvent& e){update(e.newHealth);});
+}
+
+
+void HealthBar::update(int health){
+  int segments = Player::maxHealth / (maxSegmentsX-1);
+  int minUv = (maxSegmentsX-1) - (health/segments) + 1;
+  engine.changeSprite(bar, "./assets/ui.png",{(float)minUv/maxSegmentsX,0.0f/maxSegmentsY},{((float)minUv+1)/maxSegmentsX,1.0f/maxSegmentsY});
 }
 
 
