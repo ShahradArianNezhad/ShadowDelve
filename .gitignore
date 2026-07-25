@@ -1,5 +1,6 @@
 /cache
 /build
 /build-windows
+/shadowDelve
 windows.cmake
 shadowDelve.exe
