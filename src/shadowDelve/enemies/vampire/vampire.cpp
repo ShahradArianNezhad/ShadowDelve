@@ -15,7 +15,7 @@ Vampire::Vampire(vec2 pos,Engine& e):EnemyEntity(e){
   engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{0,0},{12,18}});
   EventManager::subscribe<PlayerAttackedEvent>([this](const PlayerAttackedEvent& e){playerAttackedHandler(e);});
   setMode(MODE::IDLE);
-  ScheduleManager::do_every(random()%6 + 3,[this](){
+  ScheduleManager::do_every(gen()%6 + 3,[this](){
       if(mode==MODE::IDLE)makeRandomMove();
   });
 };

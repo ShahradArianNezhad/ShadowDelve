@@ -15,7 +15,7 @@ ScytheSkeleton::ScytheSkeleton(vec2 pos,Engine& e):Skeleton(e){
   engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{-3,1},{12,18}});
   if(showCollider)collider = engine.makeRect({pos.x,pos.y,9}, {12,10});
   setMode(MODE::IDLE);
-  ScheduleManager::do_every(random()%6 + 3,[this](){
+  ScheduleManager::do_every(gen()%6 + 3,[this](){
       if(mode==MODE::IDLE)makeRandomMove();
   });
 }

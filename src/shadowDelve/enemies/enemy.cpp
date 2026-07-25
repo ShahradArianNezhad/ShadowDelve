@@ -105,8 +105,8 @@ bool EnemyEntity::isTileWalkable(vec2 tileCords){
 
 vec2 EnemyEntity::getRandomMove(){
   while(true){
-    int deltaX = (random()%3)-1;
-    int deltaY = (random()%3)-1;
+    int deltaX = (gen()%3)-1;
+    int deltaY = (gen()%3)-1;
     if(deltaX==0 && deltaY==0)continue;
     auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
     auto [gridX,gridY] = TileMap::positionToGridCords(trans.position);

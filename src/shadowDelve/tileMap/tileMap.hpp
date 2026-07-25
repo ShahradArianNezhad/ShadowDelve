@@ -30,6 +30,8 @@ struct Enemy{
 
 class TileMap{
   private:
+    std::random_device rd;
+    std::mt19937 gen{rd()};
     EntityId player=UINT32_MAX;
     Engine& engine;
     std::map<std::string, int> roomCount;

@@ -3,9 +3,13 @@
 #include "engine/scheduleManager/task/task.hpp"
 #include "utilities/types.hpp"
 #include "utils/types.hpp"
+#include <random>
 
 class EnemyEntity{
+  private:
+    std::random_device rd;
   protected:
+    std::mt19937 gen{rd()};
     int health=50;
     EntityId id=UINT32_MAX,collider=UINT32_MAX;
     TaskId moveTask;

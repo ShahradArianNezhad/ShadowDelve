@@ -30,7 +30,7 @@ void TileMap::update(double dt){
 void TileMap::generateMap(){
   makeRoom("./assets/map/spawn.json");
   for(int i=0;i<maxGeneratedRooms;i++){
-    auto index =random()%unusedDoors.size();
+    auto index =gen()%unusedDoors.size();
     if(connectRoomToUnusedDoor(unusedDoors[index]))unusedDoors.erase(unusedDoors.begin()+index);
   }
   sealUnusedDoors();
@@ -228,7 +228,7 @@ int TileMap::getRandomRoomCount(){
 
 std::filesystem::path TileMap::selectRandomRoom(){
   auto availableRoomsCount = getRandomRoomCount();
-  auto selectedRoom = random()%availableRoomsCount;
+  auto selectedRoom = gen()%availableRoomsCount;
   auto counter=0;
   for(auto& f:std::filesystem::directory_iterator(roomsPath)){
     if(counter==selectedRoom)return f.path();
@@ -593,7 +593,7 @@ void TileMap::revealTiles(vec2 gridCoords,std::vector<vec2>& visited){
     if(hasEnemy(gridCoords.x, gridCoords.y)){
       for(auto enemy:enemyMap[gridCoords.x][gridCoords.y]){
         if(enemy.type=="skeleton"){
-          int num = random()%3;
+          int num = gen()%3;
           if(num>=1)spawnedEnemies.emplace_back(std::make_unique<ScytheSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
           else spawnedEnemies.emplace_back(std::make_unique<DaggerSkeleton>(gridCordsToPosition(gridCoords.x,gridCoords.y),engine));
         }else if(enemy.type=="vampire"){
