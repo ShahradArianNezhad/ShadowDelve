@@ -16,6 +16,15 @@ file(GLOB_RECURSE PROJECT_HEADERS CONFIGURE_DEPENDS
 )
 
 add_executable(shadowDelve ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+
+if (MINGW)
+    target_link_options(shadowDelve PRIVATE
+        -static-libgcc
+        -static-libstdc++
+        -static
+    )
+endif()
+
 target_include_directories(shadowDelve PRIVATE src)
 target_include_directories(shadowDelve PRIVATE include)
 target_include_directories(shadowDelve PRIVATE Vireon/vireon.hpp)
