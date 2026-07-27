@@ -55,6 +55,7 @@ void Player::setMode(MODE mode){
       data=idleAnimationData;
       break;
     case MODE::MOVE:
+      walkSound = AudioManager::playSound("./assets/audio/walking.wav",true);
       data=moveAnimationData;
       break;
     case MODE::BASIC_ATTACK:
@@ -74,6 +75,10 @@ void Player::setMode(MODE mode){
       ScheduleManager::cancel_task(animationJob);
       animationJob = ScheduleManager::do_every(0.02, [this](){fallAnimationFunc();});
       return;
+  }
+  if(mode!=MODE::MOVE && walkSound.id!=UINT32_MAX){
+    AudioManager::deleteSound(walkSound);
+    walkSound.id=UINT32_MAX;
   }
 
   animationFrame=0;

@@ -129,6 +129,7 @@ void DaggerSkeleton::update(double dt){
       }
       if(engine.rectIsColliding(Player::id, id)&&!locked&&currFrame>=6){
         EventManager::emit(PlayerDamagedEvent{id,attackDamage});
+        AudioManager::playSound("./assets/audio/dagger.wav");
         locked=true;
       }
       break;

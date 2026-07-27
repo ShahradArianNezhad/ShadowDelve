@@ -67,7 +67,7 @@ class Player {
   EntityId trails[trailCount];
   EntityId collider;
   void setHealth(int health);
-  AudioManager::Sound swing{UINT32_MAX};
+  AudioManager::Sound walkSound{UINT32_MAX};
 
   bool needDoorPopUp=true;
   std::unordered_map<std::string,KeyPopUp> popUps;
