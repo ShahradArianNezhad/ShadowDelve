@@ -9,7 +9,7 @@ a demo made to showcase the abilities of the Vireon game engine and its ease of 
 ## Compiling And Running
 ```bash
 git clone https://github.com/ShahradArianNezhad/ShadowDelve
-cd ShadwoDelve
+cd ShadowDelve
 cmake -B build && cmake --build build
 ./shadowDelve
 ```
