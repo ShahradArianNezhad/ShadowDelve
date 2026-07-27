@@ -1,3 +1,4 @@
+#include "engine/audioManager/audioManager.hpp"
 #include "engine/entityManager/component/components.hpp"
 #include "engine/meshManager/meshManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
@@ -735,6 +736,7 @@ void TileMap::toggleDoor(DoorPair& pair,vec2 from){
     revealFromDoor(pair, from);
     toggleDoor(pair.first,from);
     toggleDoor(pair.second,from);
+    AudioManager::playSound("./assets/audio/door.wav");
   }
 }
 

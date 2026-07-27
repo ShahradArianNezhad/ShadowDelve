@@ -1,4 +1,5 @@
 #include "skeleton.hpp"
+#include "engine/audioManager/audioManager.hpp"
 #include "engine/eventManager/eventManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
 #include "shadowDelve/enemies/enemy.hpp"
@@ -98,6 +99,7 @@ void Skeleton::roamToGoal(double dt){
 
 void Skeleton::attack(){
   if(!canAttack)return;
+  AudioManager::playSound("./assets/audio/dagger.wav");
   auto trans = engine.componentManager.getComponent<Component::TRANSFORM>(id);
   vec2 pos = trans.position;
   vec2 playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(Player::id).position;

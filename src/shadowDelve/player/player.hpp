@@ -1,4 +1,5 @@
 #pragma once
+#include "engine/audioManager/audioManager.hpp"
 #include "engine/engine.hpp"
 #include "engine/entityManager/component/components.hpp"
 #include "engine/scheduleManager/task/task.hpp"
@@ -66,6 +67,7 @@ class Player {
   EntityId trails[trailCount];
   EntityId collider;
   void setHealth(int health);
+  AudioManager::Sound swing{UINT32_MAX};
 
   bool needDoorPopUp=true;
   std::unordered_map<std::string,KeyPopUp> popUps;

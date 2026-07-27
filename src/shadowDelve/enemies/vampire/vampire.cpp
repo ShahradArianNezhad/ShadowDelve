@@ -1,4 +1,5 @@
 #include "./vampire.hpp"
+#include "engine/audioManager/audioManager.hpp"
 #include "engine/entityManager/component/components.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
 #include "shadowDelve/enemies/vampire/fireball/fireball.hpp"
@@ -206,6 +207,7 @@ bool Vampire::canSeePlayer(){
 
 void Vampire::attack(){
   setMode(MODE::ATTACK);
+  AudioManager::playSound("./assets/audio/fireball.wav");
   canAttack=false;
   locked=true;
   ScheduleManager::do_after(attackCooldown, [this](){canAttack=true;});

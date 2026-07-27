@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "engine/audioManager/audioManager.hpp"
 #include "engine/entityManager/component/components.hpp"
 #include "engine/eventManager/eventManager.hpp"
 #include "engine/scheduleManager/scheduleManager.hpp"
@@ -19,6 +20,7 @@ void Player::init(){
   setMode(MODE::IDLE);
   tileMap.setPlayer(id);
   EventManager::subscribe<PlayerDamagedEvent>([this](const PlayerDamagedEvent& e){
+      if(mode!=MODE::DEATH)AudioManager::playSound("./assets/audio/player_damaged.wav");
       auto playerPos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
       auto enemyPos = engine.componentManager.getComponent<Component::TRANSFORM>(e.from).position;
       vec2 dir = glm::normalize(vec2{enemyPos.x-playerPos.x,enemyPos.y-playerPos.y});
@@ -32,6 +34,7 @@ void Player::init(){
       if(health<=0)setMode(MODE::DEATH);
       else setMode(MODE::DAMAGED);
   });
+  AudioManager::cacheSound("./assets/audio/light_swing.wav");
 }
 
 void Player::animationFunction(const AnimationData& data){
@@ -65,6 +68,7 @@ void Player::setMode(MODE mode){
       break;
     case MODE::DEATH:
       data=DeathAnimationData;
+      AudioManager::playSound("./assets/audio/player_death.aiff");
       break;
     case MODE::FALL:
       ScheduleManager::cancel_task(animationJob);
@@ -197,6 +201,7 @@ void Player::dash(){
     canDash=false;
     auto pos = engine.componentManager.getComponent<Component::TRANSFORM>(id).position;
     auto uv = engine.componentManager.getComponent<Component::UVRECT>(id);
+    AudioManager::playSound("./assets/audio/dash2.wav");
     for(int i=0;i<trailCount;i++){
       auto& trail = trails[i];
       trail = engine.makeSprite({pos.x,pos.y,PLAYER_LAYER-1}, "./assets/Soldier/Soldier.png",uv.uvMin,uv.uvMax);
@@ -230,6 +235,7 @@ void Player::handleInput(){
 void Player::basicAttack(){
   if(!dashing && !locked ){
   setMode(MODE::BASIC_ATTACK);
+  AudioManager::playSound("./assets/audio/light_swing.wav");
   locked=true;
   ScheduleManager::do_after(basicMelleAttackAnimationData.secsPerFrame*(basicMelleAttackAnimationData.maxFrames+1),[this](){
       locked=false;
@@ -246,6 +252,7 @@ void Player::heavyAttack(){
     dash();
     setMode(MODE::HEAVY_ATTACK);
     locked=true;
+    AudioManager::playSound("./assets/audio/heavy_swing.wav");
     ScheduleManager::do_after(heavyMelleAttackAnimationData.secsPerFrame*(heavyMelleAttackAnimationData.maxFrames+1),[this](){
         locked=false;
         engine.componentManager.setComponent(id, Component::RECTCOLLIDER{{4,-3},{20,20}});
@@ -322,6 +329,7 @@ void Player::update(double dt){
   if(mode==MODE::HEAVY_ATTACK)EventManager::emit(PlayerAttackedEvent{10});
   if(!dashing && shouldFall()){
       setMode(MODE::FALL);
+      AudioManager::playSound("./assets/audio/fall.wav");
       return;
   }
   makePopUps();
